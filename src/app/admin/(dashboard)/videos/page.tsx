@@ -115,20 +115,32 @@ export default function VideosPage() {
   async function runImport() {
     setImporting(true);
     setImportMsg("");
-    const res = await fetch("/api/admin/videos/import", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ csv: csvText }),
-    });
-    const d = await res.json().catch(() => ({}));
-    setImporting(false);
-    if (res.ok) {
-      setImportMsg(
-        `Created ${d.created ?? 0}, skipped ${d.skipped ?? 0}. Errors: ${(d.errors ?? []).length}`
-      );
-      if (d.created > 0) load();
-    } else {
-      setImportMsg(d.error ?? "Import failed");
+    try {
+      const res = await fetch("/api/admin/videos/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csv: csvText }),
+      });
+      const d = await res.json().catch(() => ({}));
+      setImporting(false);
+      if (res.ok) {
+        if (d.errors?.length) {
+          setImportMsg(
+            `Errors (${d.errors.length}): ${d.errors.slice(0, 3).map((e: any) => `Row ${e.row}: ${e.error}`).join(" | ")} ${d.errors.length > 3 ? "..." : ""}`
+          );
+        } else if (d.created > 0) {
+          setImportMsg(`Created ${d.created} video(s), skipped ${d.skipped || 0}.`);
+        } else {
+          setImportMsg(`Skipped ${d.skipped || 0} (duplicate embed URLs).`);
+        }
+        if (d.created > 0) load();
+        setCsvText("");
+      } else {
+        setImportMsg(d.error ?? "Import failed");
+      }
+    } catch (err: any) {
+      setImporting(false);
+      setImportMsg("Import failed");
     }
   }
 

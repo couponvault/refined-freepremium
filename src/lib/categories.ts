@@ -45,8 +45,16 @@ export async function resolveCategoryIdsFromSlugs(
   });
   const map = new Map(found.map((c) => [c.slug, c.id]));
   const missing = slugs.filter((s) => !map.has(s));
-  if (missing.length)
-    return { error: `Unknown categorySlug(s): ${missing.join(", ")}` };
+  
+  if (missing.length) {
+    for (const s of missing) {
+      const name = s.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+      const c = await db.category.create({
+        data: { name, slug: s, icon: "🎬", enabled: true, order: 0 }
+      });
+      map.set(s, c.id);
+    }
+  }
   return slugs.map((s) => map.get(s)!);
 }
 

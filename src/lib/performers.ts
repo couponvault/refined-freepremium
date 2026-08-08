@@ -45,8 +45,16 @@ export async function resolvePerformerIdsFromSlugs(
   });
   const map = new Map(found.map((p) => [p.slug, p.id]));
   const missing = slugs.filter((s) => !map.has(s));
-  if (missing.length)
-    return { error: `Unknown performerSlug(s): ${missing.join(", ")}` };
+  
+  if (missing.length) {
+    for (const s of missing) {
+      const name = s.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+      const p = await db.performer.create({
+        data: { name, slug: s, imageUrl: "", enabled: true }
+      });
+      map.set(s, p.id);
+    }
+  }
   return slugs.map((s) => map.get(s)!);
 }
 
