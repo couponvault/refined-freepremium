@@ -3,11 +3,9 @@ generator client {
 }
 
 datasource db {
-  // Local default: SQLite file (see .env / .env.example).
-  // For Vercel + Neon/Supabase: change provider to "postgresql" and set a Postgres DATABASE_URL
-  // (and DIRECT_URL if you add directUrl). Steps are in docs/FreePremium-Production-Deploy-Guide.pdf
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Category {
