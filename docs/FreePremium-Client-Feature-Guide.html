@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FreePremium — Client Feature Guide</title>
+  <style>
+    @page { margin: 18mm 16mm; size: A4; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      color: #1a1a1a;
+      line-height: 1.45;
+      font-size: 11pt;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      font-size: 22pt;
+      margin: 0 0 6px;
+      color: #111;
+      border-bottom: 3px solid #e11d48;
+      padding-bottom: 10px;
+    }
+    .subtitle { color: #555; margin: 0 0 22px; font-size: 11pt; }
+    h2 {
+      font-size: 14pt;
+      margin: 26px 0 10px;
+      color: #111;
+      page-break-after: avoid;
+      border-left: 4px solid #e11d48;
+      padding-left: 10px;
+    }
+    h3 {
+      font-size: 12pt;
+      margin: 16px 0 6px;
+      color: #222;
+      page-break-after: avoid;
+    }
+    p, li { margin: 0 0 8px; }
+    ul { margin: 0 0 12px; padding-left: 20px; }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 0 0 12px;
+      page-break-inside: avoid;
+      background: #fafafa;
+    }
+    .label {
+      display: inline-block;
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #e11d48;
+      margin-bottom: 4px;
+    }
+    .meta { color: #666; font-size: 10pt; margin-top: 4px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      font-size: 10pt;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f3f3; }
+    .cover-box {
+      background: linear-gradient(135deg, #1a1016, #2a1520);
+      color: #faf6f7;
+      padding: 28px 24px;
+      border-radius: 12px;
+      margin-bottom: 28px;
+    }
+    .cover-box h1 {
+      color: #fff;
+      border: none;
+      margin: 0 0 8px;
+      padding: 0;
+    }
+    .cover-box p { color: #d4c4cb; margin: 0; }
+    .note {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      font-size: 10pt;
+    }
+    .footer {
+      margin-top: 36px;
+      padding-top: 12px;
+      border-top: 1px solid #ddd;
+      font-size: 9pt;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cover-box">
+    <h1>FreePremium</h1>
+    <p>Client Feature Guide — what the website does, how each part works, and why it exists</p>
+    <p style="margin-top:10px;font-size:10pt;opacity:.85">Adult video aggregation platform · Admin-managed · No public user accounts</p>
+  </div>
+
+  <p class="subtitle">
+    This document is written for the business owner / client. It explains every major feature in plain language.
+    Technical hosting notes are at the end.
+  </p>
+
+  <h2>1. What FreePremium is</h2>
+  <div class="card">
+    <p>
+      FreePremium is a full website where visitors watch videos embedded from external hosts
+      (YouTube, tube players, etc.). You manage all content from a private <strong>Admin panel</strong>.
+      Visitors do <strong>not</strong> create accounts. Lists like Watch Later stay on their device.
+    </p>
+    <p class="meta">
+      Why: Fast to launch, low maintenance, no user-database / password resets for the public.
+    </p>
+  </div>
+
+  <h2>2. Public website (visitor side)</h2>
+
+  <h3>2.1 Age gate</h3>
+  <div class="card">
+    <div class="label">What</div>
+    <p>Adults-only confirmation screen before entering the site.</p>
+    <div class="label">How</div>
+    <p>Visitor clicks “I am 18 or older”. Choice is remembered in the browser. Search bots skip it so SEO still works.</p>
+    <div class="label">Why</div>
+    <p>Legal / policy expectation for adult content sites.</p>
+  </div>
+
+  <h3>2.2 Header navigation</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Home</strong> — main page</li>
+      <li><strong>Movies / Anime / Music</strong> — pinned category shortcuts</li>
+      <li><strong>Pornstars</strong> — browse all performers</li>
+      <li><strong>Categories ▾</strong> — full category list (including Sports and adult niches)</li>
+      <li><strong>Search</strong> — typeahead suggestions while typing</li>
+      <li><strong>Random (🎲)</strong> — opens a random published video</li>
+      <li><strong>Later</strong> — Watch Later list</li>
+      <li><strong>Theme toggle</strong> — light/dark preference for the visitor</li>
+    </ul>
+  </div>
+
+  <h3>2.3 Homepage sections</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Ad slot (top)</strong> — home banner ad area</li>
+      <li><strong>Quick chips</strong> — fast filters (New, Most viewed, HD, Long, Exclusive)</li>
+      <li><strong>Watch Later / Continue Watching</strong> — personal rows from the visitor’s browser</li>
+      <li><strong>Popular tags</strong> — hot tags across the library</li>
+      <li><strong>Featured</strong> — max <strong>6</strong> videos. If you feature a 7th, the oldest featured video is automatically removed from Featured</li>
+      <li><strong>Trending now</strong> — horizontal rail of trending-marked videos</li>
+      <li><strong>Latest uploads</strong> — newest <strong>6</strong> videos</li>
+      <li><strong>More videos</strong> — older uploads move here when newer ones take Latest slots</li>
+      <li><strong>Load more</strong> — infinite-style loading for more catalog items</li>
+      <li><strong>Browse categories</strong> — category tiles toward the bottom</li>
+    </ul>
+  </div>
+
+  <h3>2.4 Categories</h3>
+  <div class="card">
+    <p><strong>What:</strong> Niche pages like Amateur, MILF, POV, Hentai, Sports, etc.</p>
+    <p><strong>How:</strong> Admin creates/edits categories (name, icon, image, order, on/off). Videos are assigned to a category.</p>
+    <p><strong>Why:</strong> Helps visitors browse by taste and improves SEO landing pages.</p>
+  </div>
+
+  <h3>2.5 Pornstars (performers)</h3>
+  <div class="card">
+    <p><strong>What:</strong> Performer profiles with photo, bio, and all videos featuring them.</p>
+    <p><strong>How:</strong> Admin → Performers to add name + image. Assign one or more performers on Add Video / CSV Maker. On the video page, visitors click a performer to open their page.</p>
+    <p><strong>Why:</strong> Strong retention pattern on adult tube sites — people follow stars, not only titles.</p>
+  </div>
+
+  <h3>2.6 Tags &amp; search</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Tags</strong> — comma-separated on each video; public tag pages list matching videos</li>
+      <li><strong>Search</strong> — full search page + live suggestions in the header</li>
+      <li><strong>Filters</strong> — sort, quality, exclusive, duration where available</li>
+    </ul>
+  </div>
+
+  <h3>2.7 Video watch page</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Embed player</strong> — plays the external video URL</li>
+      <li><strong>Exclusive unlock</strong> — gated videos need the site unlock code (set in Settings)</li>
+      <li><strong>Sticky mini player</strong> — keeps playing while scrolling on supported layouts</li>
+      <li><strong>Up next / related</strong> — suggested videos to keep binge watching</li>
+      <li><strong>Autoplay next</strong> — optional countdown to the next related video</li>
+      <li><strong>Views</strong> — site-managed counters (not copied from YouTube/tube host)</li>
+      <li><strong>Performers row</strong> — clickable star chips under the title</li>
+      <li><strong>Share buttons</strong> — copy link / social share helpers</li>
+      <li><strong>Watch later</strong> — save to personal list</li>
+      <li><strong>Report</strong> — visitor can report a problem video</li>
+      <li><strong>Ad slots</strong> — header + sidebar placements</li>
+    </ul>
+  </div>
+
+  <h3>2.8 Watch Later &amp; Continue Watching</h3>
+  <div class="card">
+    <p>Stored in the visitor’s browser (local storage). No login required.</p>
+    <p class="meta">Why: Zero friction. Limitation: lists do not sync across phones/computers.</p>
+  </div>
+
+  <h3>2.9 Mobile bottom navigation</h3>
+  <div class="card">
+    <p>Quick links for Home, Hot, Later, Browse, Random — designed for one-thumb mobile use.</p>
+  </div>
+
+  <h3>2.10 Legal / trust pages</h3>
+  <div class="card">
+    <ul>
+      <li>Terms, Privacy, Content Policy</li>
+      <li>DMCA form (public) + admin inbox for requests</li>
+      <li>Video report form → Admin → Reports</li>
+    </ul>
+    <p class="meta">Why: Required for responsible adult-site operation and dispute handling.</p>
+  </div>
+
+  <h3>2.11 SEO tools (automatic)</h3>
+  <div class="card">
+    <ul>
+      <li>Per-page titles/descriptions</li>
+      <li><code>/sitemap.xml</code> and <code>/sitemap-videos.xml</code> for Google</li>
+      <li>Structured data (JSON-LD) on key pages</li>
+      <li>Google Search Console verification field in Settings</li>
+    </ul>
+  </div>
+
+  <h2>3. Advertising system</h2>
+  <div class="card">
+    <p><strong>Slots:</strong> Home banner, video header, video sidebar, in-grid / mid-page, footer, native/in-feed, popunder (first click).</p>
+    <p><strong>How:</strong> Paste ad-network HTML in Admin → Settings → Ad spaces. Empty slots stay hidden.</p>
+    <p><strong>Ad preview mode:</strong> Toggle at the top of Settings. Turns on labeled demo ads so you can see exact placements. Saves instantly. Turn OFF before going live. Popunders do not fire while preview is on.</p>
+    <p class="meta">Why: Lets you test layout safely before pasting real adult-network codes.</p>
+  </div>
+
+  <h2>4. Themes &amp; look</h2>
+  <div class="card">
+    <p>Admin can pick skins (Neon Rose, Velvet, Chrome, Obsidian) or a fully <strong>Custom</strong> color set. Preview in admin, Save to apply site-wide.</p>
+    <p class="meta">Why: Brand control without hiring a designer for every color tweak.</p>
+  </div>
+
+  <h2>5. Admin panel (your control room)</h2>
+  <table>
+    <tr><th>Area</th><th>What you can do</th></tr>
+    <tr><td>Dashboard</td><td>Counts, top videos, zero-view videos, open reports/DMCA</td></tr>
+    <tr><td>Videos</td><td>List, search, filter, edit, trash, bulk feature/trend/publish</td></tr>
+    <tr><td>Add Video</td><td>Full form: embed, thumb, SEO, category, performers, flags</td></tr>
+    <tr><td>CSV Maker</td><td>Queue many videos, pick performers/category, download CSV</td></tr>
+    <tr><td>Import CSV</td><td>Bulk create videos from CSV (skips duplicate embeds)</td></tr>
+    <tr><td>Categories</td><td>Create/edit/reorder/enable niches + images</td></tr>
+    <tr><td>Performers</td><td>Create/edit pornstars + photos</td></tr>
+    <tr><td>Reports</td><td>Review visitor reports</td></tr>
+    <tr><td>DMCA</td><td>Review takedown requests</td></tr>
+    <tr><td>Sitemap</td><td>Admin HTML map of public URLs + links to XML sitemaps</td></tr>
+    <tr><td>Settings</td><td>SEO, theme, unlock code, ads, ad preview</td></tr>
+  </table>
+
+  <h3>5.1 CSV workflow (recommended for bulk)</h3>
+  <div class="card">
+    <ol>
+      <li>Admin → Performers / Categories — create what you need</li>
+      <li>Admin → CSV Maker — fill each video, select performers, Add to list</li>
+      <li>Create CSV / download</li>
+      <li>Videos → Import CSV</li>
+    </ol>
+    <p>CSV includes <code>performerSlugs</code> (comma-separated) and <code>categorySlug</code>.</p>
+  </div>
+
+  <h3>5.2 Featured limit (important)</h3>
+  <div class="card">
+    <p>Featured holds <strong>only 6 videos</strong>. Featuring another video automatically unfeatures the oldest featured item. Works for single edit, bulk feature, and CSV import.</p>
+  </div>
+
+  <h3>5.3 Exclusive videos</h3>
+  <div class="card">
+    <p>Mark a video Exclusive. Visitors must enter the <strong>Unlock Code</strong> from Settings before the player loads. Code is stored in settings — not hardcoded in the app.</p>
+  </div>
+
+  <h2>6. Security &amp; credentials (for the client)</h2>
+  <div class="note">
+    <strong>Important:</strong> Admin username/password and session secret are <em>not</em> stored in the website source code.
+    They live only in server environment variables (<code>.env</code> on the host). Never share them in chat/email screenshots.
+  </div>
+  <div class="card">
+    <ul>
+      <li>Admin routes and APIs require a signed session cookie</li>
+      <li>Production refuses to start without strong <code>SESSION_SECRET</code>, <code>ADMIN_PASSWORD</code>, and site URL</li>
+      <li>Login, unlock, reports, DMCA, and view pings are rate-limited</li>
+      <li>Embed URLs are checked against an allowlist</li>
+      <li>Security headers (CSP-related protections) are applied</li>
+    </ul>
+  </div>
+
+  <h2>7. Hosting summary (zero / low budget)</h2>
+  <div class="card">
+    <p>FreePremium is a <strong>single Next.js app</strong> (frontend + backend together). Do not split Netlify frontend + Render backend.</p>
+    <ul>
+      <li><strong>Recommended free path:</strong> GitHub → Vercel (app) + Neon/Supabase (free Postgres) + Cloudflare (domain DNS)</li>
+      <li><strong>Alternative free path:</strong> Oracle Always Free VM running the whole app + SQLite</li>
+      <li>Point your <strong>FreePremium domain</strong> via Cloudflare DNS to the host</li>
+    </ul>
+    <p class="meta">Full technical steps: see project file DEPLOY.md</p>
+  </div>
+
+  <h2>8. Go-live checklist</h2>
+  <div class="card">
+    <ul>
+      <li>☐ Set strong admin username/password + session secret on the host</li>
+      <li>☐ Set public site URL to your real https domain</li>
+      <li>☐ Turn <strong>Ad preview mode OFF</strong></li>
+      <li>☐ Set unlock code (if using Exclusive)</li>
+      <li>☐ Paste real ad codes only from trusted networks</li>
+      <li>☐ Submit <code>/sitemap.xml</code> in Google Search Console</li>
+      <li>☐ Confirm age gate, one video page, one performer page, admin login</li>
+      <li>☐ Backup the database after first content import</li>
+    </ul>
+  </div>
+
+  <h2>9. Feature map (quick reference)</h2>
+  <table>
+    <tr><th>Feature</th><th>Visitor</th><th>Admin</th></tr>
+    <tr><td>Watch embeds</td><td>✓</td><td>Add/edit URLs</td></tr>
+    <tr><td>Categories</td><td>Browse</td><td>CRUD</td></tr>
+    <tr><td>Pornstars</td><td>Browse / filter by star</td><td>CRUD + assign</td></tr>
+    <tr><td>Tags / Search</td><td>✓</td><td>Via video fields</td></tr>
+    <tr><td>Featured (max 6)</td><td>Home rail</td><td>Toggle / auto-cap</td></tr>
+    <tr><td>Latest + More</td><td>Home</td><td>By upload time</td></tr>
+    <tr><td>Exclusive unlock</td><td>Enter code</td><td>Set code + flag videos</td></tr>
+    <tr><td>Watch later / Continue</td><td>Local device</td><td>—</td></tr>
+    <tr><td>Ads + preview mode</td><td>See ads</td><td>Paste HTML / preview</td></tr>
+    <tr><td>Themes</td><td>See site skin</td><td>Pick / custom colors</td></tr>
+    <tr><td>CSV Maker / Import</td><td>—</td><td>Bulk publishing</td></tr>
+    <tr><td>Reports / DMCA</td><td>Submit</td><td>Review</td></tr>
+    <tr><td>SEO / Sitemaps</td><td>—</td><td>Settings + auto XML</td></tr>
+  </table>
+
+  <div class="footer">
+    FreePremium Client Feature Guide · Generated for client handover ·
+    Does not contain server passwords or secrets ·
+    Ask your developer for hosting credentials separately and store them in a password manager.
+  </div>
+
+</body>
+</html>

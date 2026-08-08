@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FreePremium — Production Deploy Guide (GitHub + Vercel + Postgres + Cloudflare)</title>
+  <style>
+    @page { margin: 16mm 14mm; size: A4; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      color: #1a1a1a;
+      line-height: 1.5;
+      font-size: 10.5pt;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 24px 48px;
+    }
+    h1 {
+      font-size: 20pt;
+      margin: 0 0 8px;
+      color: #111;
+      border-bottom: 3px solid #e11d48;
+      padding-bottom: 10px;
+    }
+    h2 {
+      font-size: 13.5pt;
+      margin: 28px 0 10px;
+      color: #111;
+      page-break-after: avoid;
+      border-left: 4px solid #e11d48;
+      padding-left: 10px;
+    }
+    h3 {
+      font-size: 11.5pt;
+      margin: 18px 0 6px;
+      color: #222;
+      page-break-after: avoid;
+    }
+    p, li { margin: 0 0 8px; }
+    ul, ol { margin: 0 0 12px; padding-left: 22px; }
+    .cover {
+      background: linear-gradient(135deg, #1a1016, #2a1520);
+      color: #faf6f7;
+      padding: 28px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      color: #fff;
+      border: none;
+      padding: 0;
+      margin: 0 0 10px;
+    }
+    .cover p { color: #e8dce0; margin: 0 0 6px; }
+    .badge {
+      display: inline-block;
+      background: #e11d48;
+      color: #fff;
+      font-size: 9pt;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-top: 12px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 0 0 12px;
+      background: #fafafa;
+      page-break-inside: avoid;
+    }
+    .warn {
+      border-left: 4px solid #f59e0b;
+      background: #fffbeb;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      border-radius: 0 8px 8px 0;
+      page-break-inside: avoid;
+    }
+    .ok {
+      border-left: 4px solid #16a34a;
+      background: #f0fdf4;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      border-radius: 0 8px 8px 0;
+      page-break-inside: avoid;
+    }
+    .danger {
+      border-left: 4px solid #e11d48;
+      background: #fff1f2;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      border-radius: 0 8px 8px 0;
+      page-break-inside: avoid;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 7px 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f3f3; }
+    code, .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9pt;
+      background: #f3f4f6;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #111827;
+      color: #f9fafb;
+      padding: 12px 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 8.5pt;
+      line-height: 1.4;
+      page-break-inside: avoid;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+    .step {
+      counter-increment: step;
+      margin: 0 0 10px;
+      padding-left: 0;
+    }
+    .toc a { color: #be123c; text-decoration: none; }
+    .toc li { margin-bottom: 4px; }
+    .footer-note {
+      margin-top: 36px;
+      padding-top: 12px;
+      border-top: 1px solid #ddd;
+      font-size: 9pt;
+      color: #666;
+    }
+    .check li { list-style: none; margin-left: -6px; }
+    .check li::before { content: "☐ "; color: #e11d48; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>FreePremium — Production Deploy Guide</h1>
+  <p><strong>Stack:</strong> GitHub → Vercel (Next.js app) → Neon <em>or</em> Supabase (free Postgres) → Cloudflare (domain DNS)</p>
+  <p><strong>Audience:</strong> Client / operator — follow every step in order. No coding experience required beyond copy/paste.</p>
+  <p><strong>Outcome:</strong> Live site at <code style="background:#000;color:#fff;padding:2px 6px;border-radius:4px;">https://yourdomain.com</code> with admin panel, database, HTTPS, and automatic deploys from GitHub.</p>
+  <span class="badge">Adult site · 18+ · Keep admin secrets private</span>
+</div>
+
+<div class="danger">
+  <strong>Important:</strong> FreePremium is one full-stack Next.js app. Do <strong>not</strong> put “frontend on Netlify” and “backend elsewhere.” Use <strong>Vercel for the whole app</strong> and <strong>Postgres</strong> (Neon or Supabase) for the database. SQLite files do not work on Vercel’s serverless filesystem.
+</div>
+
+<h2>0. What you will create</h2>
+<table>
+  <tr><th>Piece</th><th>Service</th><th>Cost (typical)</th><th>Job</th></tr>
+  <tr><td>Source code</td><td>GitHub</td><td>Free</td><td>Store code + trigger auto-deploy</td></tr>
+  <tr><td>Website / API / Admin</td><td>Vercel</td><td>Free Hobby tier*</td><td>Runs Next.js in production</td></tr>
+  <tr><td>Database</td><td>Neon <em>or</em> Supabase</td><td>Free Postgres tier*</td><td>Stores videos, categories, settings</td></tr>
+  <tr><td>Domain DNS + HTTPS</td><td>Cloudflare</td><td>Free plan</td><td>Points domain to Vercel, SSL</td></tr>
+</table>
+<p class="meta">* Free tiers have limits (sleep / compute). Fine for launch and moderate traffic; upgrade later if needed. Adult content is allowed on these stacks when you follow each provider’s ToS — always review current policies.</p>
+
+<div class="card">
+  <strong>Time estimate:</strong> 45–90 minutes the first time if accounts already exist.<br />
+  <strong>You need:</strong> a computer, email, domain name, GitHub access to the FreePremium repo (or a zip from your developer), and a password manager recommended.
+</div>
+
+<h2>1. Accounts to create (do this first)</h2>
+<ol>
+  <li><strong>GitHub</strong> — <span class="mono">https://github.com/signup</span></li>
+  <li><strong>Vercel</strong> — <span class="mono">https://vercel.com/signup</span> (sign up with GitHub)</li>
+  <li><strong>Neon</strong> — <span class="mono">https://neon.tech</span> <em>or</em> <strong>Supabase</strong> — <span class="mono">https://supabase.com</span> (pick one database)</li>
+  <li><strong>Cloudflare</strong> — <span class="mono">https://dash.cloudflare.com/sign-up</span></li>
+</ol>
+<div class="warn">
+  Use a strong unique password for admin later. Never reuse your GitHub password as <code>ADMIN_PASSWORD</code>.
+</div>
+
+<h2>2. Get the code onto GitHub</h2>
+<p>Your developer should already have FreePremium in a Git repository. Choose <strong>A</strong> or <strong>B</strong>.</p>
+
+<h3>Option A — Developer already pushed the repo</h3>
+<ol>
+  <li>Open GitHub → find the FreePremium repository.</li>
+  <li>Confirm you are a collaborator / owner.</li>
+  <li>Copy the repo URL, e.g. <code>https://github.com/YOUR_USER/freepremium</code>.</li>
+</ol>
+
+<h3>Option B — Create a new GitHub repo and upload</h3>
+<ol>
+  <li>GitHub → <strong>New repository</strong>.</li>
+  <li>Name: <code>freepremium</code> (or your brand name).</li>
+  <li>Visibility: <strong>Private</strong> recommended (contains your business app).</li>
+  <li>Do <strong>not</strong> add a README if the project already has files.</li>
+  <li>Ask your developer to push the code, <strong>or</strong> use GitHub Desktop:
+    <ul>
+      <li>Install GitHub Desktop → File → Add Local Repository → choose the FreePremium folder.</li>
+      <li>Publish repository to your GitHub account.</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="danger">
+  <strong>Never upload</strong> the real <code>.env</code> file to GitHub. Only <code>.env.example</code> is safe. Secrets go into Vercel Environment Variables (Section 5).
+</div>
+
+<h2>3. Create the free Postgres database</h2>
+<p>Choose <strong>either Neon or Supabase</strong> — not both for the same site.</p>
+
+<h3>3A. Neon (recommended for Vercel)</h3>
+<ol>
+  <li>Go to <span class="mono">https://console.neon.tech</span> → Sign up / Log in.</li>
+  <li>Click <strong>Create project</strong>.</li>
+  <li>Name: <code>freepremium</code>. Region: pick closest to your audience (e.g. US East for USA traffic).</li>
+  <li>Create project → open the project dashboard.</li>
+  <li>Click <strong>Connect</strong> (or Connection details).</li>
+  <li>Copy <strong>two</strong> connection strings:
+    <ul>
+      <li><strong>Pooled</strong> connection → this becomes <code>DATABASE_URL</code> (often contains <code>-pooler</code> in the host).</li>
+      <li><strong>Direct</strong> connection → this becomes <code>DIRECT_URL</code> (no pooler).</li>
+    </ul>
+  </li>
+  <li>Both should look like:<br />
+    <code>postgresql://USER:PASSWORD@HOST/neondb?sslmode=require</code>
+  </li>
+</ol>
+<div class="ok">
+  Keep both strings in a password manager. You will paste them into Vercel soon.
+</div>
+
+<h3>3B. Supabase (alternative)</h3>
+<ol>
+  <li>Go to <span class="mono">https://supabase.com/dashboard</span> → New project.</li>
+  <li>Set a strong database password (save it).</li>
+  <li>Region: choose closest to users.</li>
+  <li>Project Settings → <strong>Database</strong> → Connection string.</li>
+  <li>Copy:
+    <ul>
+      <li><strong>URI (Transaction pooler / Mode: Transaction)</strong> → <code>DATABASE_URL</code></li>
+      <li><strong>URI (Session / Direct)</strong> → <code>DIRECT_URL</code></li>
+    </ul>
+  </li>
+  <li>Replace <code>[YOUR-PASSWORD]</code> with the real DB password if the UI shows a placeholder.</li>
+  <li>Ensure strings include SSL (Supabase usually adds this automatically).</li>
+</ol>
+
+<h2>4. Create secrets you will need</h2>
+<p>Generate these on your computer before opening Vercel.</p>
+
+<h3>4.1 Session secret</h3>
+<p>On Mac / Linux / Git Bash / Windows (PowerShell with OpenSSL), run:</p>
+<pre><code>openssl rand -base64 48</code></pre>
+<p>Copy the entire output. That is <code>SESSION_SECRET</code> (must be 32+ characters).</p>
+<p>If OpenSSL is missing on Windows, use any long random string (64+ random characters) from a password manager.</p>
+
+<h3>4.2 Admin login</h3>
+<table>
+  <tr><th>Variable</th><th>Example rules</th></tr>
+  <tr><td><code>ADMIN_USERNAME</code></td><td>Your private username (not “admin” if possible)</td></tr>
+  <tr><td><code>ADMIN_PASSWORD</code></td><td>Minimum <strong>10 characters</strong>, long &amp; unique</td></tr>
+</table>
+
+<h3>4.3 Public site URL</h3>
+<p>Decide your final domain now, e.g. <code>https://freepremium.com</code> or <code>https://www.freepremium.com</code>.</p>
+<p>Use the <strong>exact</strong> URL (with <code>https://</code>, no trailing slash) as <code>NEXT_PUBLIC_SITE_URL</code>.</p>
+<div class="warn">
+  You can temporarily use the Vercel URL first (e.g. <code>https://freepremium.vercel.app</code>), then change to the real domain after Cloudflare is set — then redeploy.
+</div>
+
+<h2>5. Switch the database to PostgreSQL (required before Vercel)</h2>
+<div class="warn">
+  The developer copy may ship with <strong>SQLite</strong> for local testing. Vercel needs <strong>Postgres</strong>.
+</div>
+<ol>
+  <li>Open <code>prisma/schema.prisma</code>.</li>
+  <li>Find <code>provider = &quot;sqlite&quot;</code> and change it to <code>provider = &quot;postgresql&quot;</code>.</li>
+  <li>Optional but recommended for Neon — under <code>url = env(&quot;DATABASE_URL&quot;)</code> add:<br />
+    <code>directUrl = env(&quot;DIRECT_URL&quot;)</code></li>
+  <li>Commit and push this change to GitHub (or ask your developer to do it once).</li>
+  <li>Use the Neon/Supabase URLs from Section 3 as <code>DATABASE_URL</code> / <code>DIRECT_URL</code> in Vercel.</li>
+</ol>
+
+<h2>6. Deploy on Vercel</h2>
+<ol>
+  <li>Open <span class="mono">https://vercel.com/dashboard</span> → <strong>Add New…</strong> → <strong>Project</strong>.</li>
+  <li>Import the GitHub <code>freepremium</code> repository (authorize GitHub if asked).</li>
+  <li>Framework Preset should detect <strong>Next.js</strong>. Leave Root Directory empty (repo root).</li>
+  <li><strong>Build Command</strong> (confirm): <code>prisma generate &amp;&amp; prisma db push &amp;&amp; next build</code><br />
+      (This is already set in <code>package.json</code> — Vercel uses <code>npm run build</code>.)</li>
+  <li><strong>Output</strong>: leave default (Next.js).</li>
+  <li><strong>Install Command</strong>: <code>npm install</code> (default).</li>
+  <li>Before clicking Deploy, open <strong>Environment Variables</strong> and add all of the following for <strong>Production</strong> (also add to Preview if you want preview links to work):</li>
+</ol>
+
+<table>
+  <tr><th>Name</th><th>Value</th></tr>
+  <tr><td><code>DATABASE_URL</code></td><td>Neon/Supabase <strong>pooled</strong> Postgres URI</td></tr>
+  <tr><td><code>DIRECT_URL</code></td><td>Neon/Supabase <strong>direct</strong> Postgres URI</td></tr>
+  <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td><code>https://yourdomain.com</code> (or temporary <code>https://….vercel.app</code>)</td></tr>
+  <tr><td><code>ADMIN_USERNAME</code></td><td>your admin username</td></tr>
+  <tr><td><code>ADMIN_PASSWORD</code></td><td>your long password (10+ chars)</td></tr>
+  <tr><td><code>SESSION_SECRET</code></td><td>openssl random string (32+ chars)</td></tr>
+</table>
+
+<div class="ok">
+  Optional later: <code>EMBED_ALLOWED_HOSTS</code>, <code>EMBED_ALLOW_ANY</code> — only if your developer instructed you.
+</div>
+
+<ol start="8">
+  <li>Click <strong>Deploy</strong>.</li>
+  <li>Wait 2–5 minutes. First deploy creates database tables via <code>prisma db push</code>.</li>
+  <li>If it succeeds, open the <code>*.vercel.app</code> URL and confirm the homepage loads.</li>
+  <li>Open <code>https://YOUR-DEPLOY.vercel.app/admin/login</code> and sign in with <code>ADMIN_USERNAME</code> / <code>ADMIN_PASSWORD</code>.</li>
+</ol>
+
+<h3>If the deploy fails</h3>
+<div class="card">
+  <ul>
+    <li><strong>Prisma / DATABASE_URL errors</strong> → check both URLs, password encoding, <code>sslmode=require</code>, and that <code>DIRECT_URL</code> is set.</li>
+    <li><strong>SESSION_SECRET / ADMIN_PASSWORD errors</strong> → production refuses weak/missing secrets. Lengthen them and redeploy.</li>
+    <li><strong>Build timeout</strong> → retry once; free tiers can be slow on first build.</li>
+    <li>Open Vercel → Project → Deployments → failed deploy → <strong>Building</strong> logs → copy the red error to your developer if stuck.</li>
+  </ul>
+</div>
+
+<h2>7. Connect your domain with Cloudflare</h2>
+<p>This makes <code>https://yourdomain.com</code> open your Vercel site with free SSL.</p>
+
+<h3>7.1 Add site to Cloudflare</h3>
+<ol>
+  <li>Buy/own a domain (Namecheap, GoDaddy, Google Domains/Squarespace, etc.).</li>
+  <li>Cloudflare Dashboard → <strong>Add a site</strong> → enter <code>yourdomain.com</code>.</li>
+  <li>Choose the <strong>Free</strong> plan → Continue.</li>
+  <li>Cloudflare scans existing DNS records → Continue.</li>
+  <li>Cloudflare shows two nameservers, e.g.:
+    <pre><code>ada.ns.cloudflare.com
+bob.ns.cloudflare.com</code></pre>
+  </li>
+  <li>At your domain registrar, replace the domain’s nameservers with Cloudflare’s two nameservers → Save.</li>
+  <li>Wait until Cloudflare shows the zone as <strong>Active</strong> (can take 5 minutes to 24 hours; often under 1 hour).</li>
+</ol>
+
+<h3>7.2 Add domain in Vercel</h3>
+<ol>
+  <li>Vercel → your project → <strong>Settings</strong> → <strong>Domains</strong>.</li>
+  <li>Add <code>yourdomain.com</code> and (recommended) <code>www.yourdomain.com</code>.</li>
+  <li>Vercel shows the DNS records it needs (usually an A record for apex and CNAME for www).</li>
+</ol>
+
+<h3>7.3 Create DNS records in Cloudflare</h3>
+<p>Typical Vercel setup (confirm values shown in your Vercel Domains page — they can change):</p>
+<table>
+  <tr><th>Type</th><th>Name</th><th>Content / Target</th><th>Proxy status</th></tr>
+  <tr><td>A</td><td><code>@</code></td><td><code>76.76.21.21</code> (Vercel’s apex IP — use what Vercel displays)</td><td>DNS only (grey cloud) <em>or</em> Proxied — see note</td></tr>
+  <tr><td>CNAME</td><td><code>www</code></td><td><code>cname.vercel-dns.com</code> (or the exact target Vercel shows)</td><td>DNS only (grey cloud) recommended first</td></tr>
+</table>
+<div class="warn">
+  <strong>Proxy tip:</strong> For the first connection, set Cloudflare records to <strong>DNS only</strong> (grey cloud). After Vercel marks the domain as Valid / SSL ready, you may turn on Proxied (orange cloud) if you want Cloudflare CDN/WAF. If SSL loops happen, keep DNS only or set SSL/TLS mode to <strong>Full</strong> (not Flexible).
+</div>
+
+<h3>7.4 Cloudflare SSL/TLS settings</h3>
+<ol>
+  <li>Cloudflare → your domain → <strong>SSL/TLS</strong>.</li>
+  <li>Set encryption mode to <strong>Full</strong> (recommended) or <strong>Full (strict)</strong> once Vercel cert is active.</li>
+  <li>Do <strong>not</strong> use <strong>Flexible</strong> (causes redirect loops with Vercel).</li>
+</ol>
+
+<h3>7.5 Update site URL env and redeploy</h3>
+<ol>
+  <li>Vercel → Project → Settings → Environment Variables.</li>
+  <li>Edit <code>NEXT_PUBLIC_SITE_URL</code> to <code>https://yourdomain.com</code> (no trailing slash).</li>
+  <li>Deployments → … on latest → <strong>Redeploy</strong> (required so the new URL is baked into the build).</li>
+</ol>
+
+<h3>7.6 Verify</h3>
+<ul class="check">
+  <li><code>https://yourdomain.com</code> loads the site</li>
+  <li><code>https://www.yourdomain.com</code> redirects or loads correctly</li>
+  <li>Padlock / HTTPS works</li>
+  <li><code>https://yourdomain.com/admin/login</code> accepts your admin password</li>
+  <li><code>https://yourdomain.com/sitemap.xml</code> opens XML</li>
+  <li><code>https://yourdomain.com/robots.txt</code> opens text</li>
+</ul>
+
+<h2>8. First-time site setup (after go-live)</h2>
+<ol>
+  <li>Login: <code>https://yourdomain.com/admin/login</code></li>
+  <li><strong>Admin → Settings</strong>
+    <ul>
+      <li>Site SEO Title / Description / Keywords</li>
+      <li>Google Search Console verification code</li>
+      <li>Theme</li>
+      <li>Ad HTML slots (ExoClick / TrafficStars / etc.) — only paste trusted codes</li>
+      <li>Turn <strong>Ad preview mode OFF</strong> for real ads</li>
+    </ul>
+  </li>
+  <li><strong>Admin → Categories / Performers / Videos</strong> — add or import content (CSV Maker supported).</li>
+  <li><strong>Google Search Console</strong>
+    <ul>
+      <li>Add property for <code>https://yourdomain.com</code></li>
+      <li>Verify with the meta tag code from Settings</li>
+      <li>Sitemaps → submit:
+        <ul>
+          <li><code>https://yourdomain.com/sitemap.xml</code></li>
+          <li><code>https://yourdomain.com/sitemap-videos.xml</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2>9. How updates work forever (no manual server)</h2>
+<ol>
+  <li>Developer pushes code to GitHub <code>main</code>/<code>master</code>.</li>
+  <li>Vercel auto-builds and deploys.</li>
+  <li>Database schema updates run during build via <code>prisma db push</code>.</li>
+  <li>Your content (videos, settings) stays in Neon/Supabase — not wiped by deploys.</li>
+</ol>
+<div class="ok">
+  You do <strong>not</strong> need to SSH into a server for normal updates.
+</div>
+
+<h2>10. Environment variables cheat sheet (copy into Vercel)</h2>
+<pre><code>DATABASE_URL=postgresql://...pooled...sslmode=require
+DIRECT_URL=postgresql://...direct...sslmode=require
+NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+ADMIN_USERNAME=........
+ADMIN_PASSWORD=........
+SESSION_SECRET=........</code></pre>
+
+<h2>11. Security rules (read once)</h2>
+<ul>
+  <li>Never post admin passwords in Discord/email screenshots.</li>
+  <li>Never commit <code>.env</code> to GitHub.</li>
+  <li>Only paste ad scripts from networks you trust (they run in visitors’ browsers).</li>
+  <li>Keep the site 18+ compliant (age gate is built-in).</li>
+  <li>Rotate <code>ADMIN_PASSWORD</code> + <code>SESSION_SECRET</code> if they leak → update Vercel env → Redeploy.</li>
+  <li>Cloudflare email routing / WAF optional later for protection.</li>
+</ul>
+
+<h2>12. Backups</h2>
+<ul>
+  <li><strong>Neon:</strong> Project → Backups / history (plan-dependent). Export SQL periodically for critical data.</li>
+  <li><strong>Supabase:</strong> Database → Backups (plan-dependent). Use dashboard SQL export for snapshots.</li>
+  <li>Export important CSV of videos from Admin if you keep a manual inventory.</li>
+</ul>
+
+<h2>13. Common problems &amp; fixes</h2>
+<table>
+  <tr><th>Problem</th><th>Fix</th></tr>
+  <tr><td>Domain not resolving</td><td>Wait for nameserver activation; check Cloudflare DNS matches Vercel instructions</td></tr>
+  <tr><td>SSL / redirect loop</td><td>Cloudflare SSL = Full (not Flexible); try DNS only (grey cloud)</td></tr>
+  <tr><td>Admin login fails</td><td>Check Vercel env vars; password min 10 chars; redeploy after changes</td></tr>
+  <tr><td>Empty site / no tables</td><td>Confirm build log shows prisma db push success; check DATABASE_URL</td></tr>
+  <tr><td>Wrong canonical URLs / SEO</td><td>Set NEXT_PUBLIC_SITE_URL to real https domain + Redeploy</td></tr>
+  <tr><td>Images/embeds blocked</td><td>Ask developer about EMBED_ALLOWED_HOSTS for new hosts</td></tr>
+  <tr><td>Free DB “paused”</td><td>Neon free projects may sleep — first request wakes them (few seconds)</td></tr>
+</table>
+
+<h2>14. Go-live checklist</h2>
+<ul class="check">
+  <li>Code is on GitHub (private recommended)</li>
+  <li>Neon or Supabase project created; pooled + direct URLs saved</li>
+  <li>prisma/schema.prisma provider set to postgresql and pushed to GitHub</li>
+  <li>Vercel project imported from GitHub</li>
+  <li>All 6 env vars set on Vercel Production</li>
+  <li>First deploy succeeded (green)</li>
+  <li>Admin login works on vercel.app</li>
+  <li>Domain added in Vercel</li>
+  <li>Cloudflare nameservers active at registrar</li>
+  <li>A / CNAME records correct</li>
+  <li>SSL/TLS = Full</li>
+  <li>NEXT_PUBLIC_SITE_URL updated + redeployed</li>
+  <li>Homepage + /admin work on custom domain</li>
+  <li>SEO settings filled</li>
+  <li>Sitemaps submitted to Google Search Console</li>
+  <li>Ad preview mode off; real ads pasted</li>
+  <li>Secrets stored offline / password manager</li>
+</ul>
+
+<h2>15. Architecture (simple picture)</h2>
+<pre><code>Visitor → Cloudflare DNS (yourdomain.com)
+        → Vercel (Next.js: public site + /api + /admin)
+        → Neon or Supabase Postgres (data)</code></pre>
+
+<h2>16. Who to contact for what</h2>
+<table>
+  <tr><th>Issue</th><th>Who</th></tr>
+  <tr><td>DNS / domain not pointing</td><td>Cloudflare docs + this guide §6</td></tr>
+  <tr><td>Deploy build failed</td><td>Send Vercel build log to your developer</td></tr>
+  <tr><td>Content / ads / SEO text</td><td>You (Admin panel)</td></tr>
+  <tr><td>New features / bugs in app</td><td>Your developer</td></tr>
+</table>
+
+<div class="footer-note">
+  <strong>FreePremium — Production Deploy Guide</strong><br />
+  Stack: GitHub + Vercel + Neon/Supabase Postgres + Cloudflare<br />
+  This document is written so a non-developer can launch production without a separate consulting call for basic hosting.<br />
+  File: <code>docs/FreePremium-Production-Deploy-Guide.pdf</code> · Companion feature list: <code>docs/FreePremium-Client-Feature-Guide.pdf</code>
+</div>
+
+</body>
+</html>

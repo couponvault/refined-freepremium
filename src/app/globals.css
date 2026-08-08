@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+/*
+ * Site skins via html[data-skin="…"] — pick in Admin → Settings.
+ * data-theme="light" still toggles visitor light mode on top of a skin.
+ */
+
+/* Neon Rose (default) */
+:root,
+html[data-skin="neon-rose"] {
+  --background: #0b080a;
+  --surface: #151014;
+  --surface-hover: #1f171c;
+  --border: #2e242b;
+  --foreground: #faf6f7;
+  --muted: #9a8892;
+  --accent: #ff2d6a;
+  --accent-hover: #ff4f84;
+  --gold: #f0b89a;
+}
+
+/* Velvet Cinema */
+html[data-skin="velvet"] {
+  --background: #0a0708;
+  --surface: #140e10;
+  --surface-hover: #1c1316;
+  --border: #2c1e22;
+  --foreground: #f7f1ef;
+  --muted: #9a8588;
+  --accent: #c41e3a;
+  --accent-hover: #e03552;
+  --gold: #e8a85c;
+}
+
+/* Hot Chrome */
+html[data-skin="chrome"] {
+  --background: #0a0b0e;
+  --surface: #12141a;
+  --surface-hover: #1a1d26;
+  --border: #2a2e3a;
+  --foreground: #f2f4f8;
+  --muted: #8b92a5;
+  --accent: #ff4d6d;
+  --accent-hover: #ff6b85;
+  --gold: #7dd3fc;
+}
+
+/* Obsidian (original purple) */
+html[data-skin="obsidian"] {
+  --background: #050507;
+  --surface: #0b0c10;
+  --surface-hover: #13141a;
+  --border: #1c1e27;
+  --foreground: #f4f5f7;
+  --muted: #808898;
+  --accent: #7c5cff;
+  --accent-hover: #977eff;
+  --gold: #e6c26e;
+}
+
+/* Custom — variables injected inline on <html> from Admin → Settings */
+html[data-skin="custom"] {
+  /* fallbacks if inline vars missing */
+  --background: #0b080a;
+  --surface: #151014;
+  --surface-hover: #1f171c;
+  --border: #2e242b;
+  --foreground: #faf6f7;
+  --muted: #9a8892;
+  --accent: #ff2d6a;
+  --accent-hover: #ff4f84;
+  --gold: #f0b89a;
+}
+
+/* Light overlays per skin */
+html[data-theme="light"],
+html[data-theme="light"][data-skin="neon-rose"] {
+  --background: #faf5f6;
+  --surface: #ffffff;
+  --surface-hover: #f3eaed;
+  --border: #e5d4db;
+  --foreground: #1a1014;
+  --muted: #6e5a63;
+  --accent: #d91856;
+  --accent-hover: #b81248;
+  --gold: #c4896a;
+}
+
+html[data-theme="light"][data-skin="velvet"] {
+  --background: #faf6f4;
+  --surface: #ffffff;
+  --surface-hover: #f3ebe8;
+  --border: #e6d8d2;
+  --foreground: #1a1210;
+  --muted: #6e5a55;
+  --accent: #a81830;
+  --accent-hover: #8c1428;
+  --gold: #b8860b;
+}
+
+html[data-theme="light"][data-skin="chrome"] {
+  --background: #f5f6f9;
+  --surface: #ffffff;
+  --surface-hover: #eef0f5;
+  --border: #d8dce6;
+  --foreground: #12141a;
+  --muted: #5c6475;
+  --accent: #e11d48;
+  --accent-hover: #be123c;
+  --gold: #0284c7;
+}
+
+html[data-theme="light"][data-skin="obsidian"] {
+  --background: #f7f8fa;
+  --surface: #ffffff;
+  --surface-hover: #f0f2f5;
+  --border: #e3e6ec;
+  --foreground: #14181f;
+  --muted: #5c6575;
+  --accent: #5b4bf0;
+  --accent-hover: #4536d6;
+  --gold: #b8860b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 60% at 100% 100%,
+      color-mix(in srgb, var(--gold) 10%, transparent),
+      transparent 50%
+    ),
+    radial-gradient(
+      70% 50% at 0% 80%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 45%
+    ),
+    var(--background);
+}
+
+body::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html[data-theme="light"] body::after {
+  opacity: 0.03;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  background: linear-gradient(
+    105deg,
+    var(--accent-hover) 0%,
+    var(--accent) 45%,
+    var(--gold) 110%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+}
+
+.glow {
+  box-shadow: 0 10px 28px -12px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.card-shadow {
+  box-shadow: 0 12px 36px -18px rgba(0, 0, 0, 0.75);
+}
+
+.thumb-heat {
+  background: linear-gradient(
+    to top,
+    rgba(8, 4, 6, 0.85) 0%,
+    color-mix(in srgb, var(--accent) 22%, transparent) 45%,
+    transparent 70%
+  );
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--surface-hover) 50%,
+    var(--surface) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.45s ease-out both;
+}

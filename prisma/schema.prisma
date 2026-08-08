@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // Local default: SQLite file (see .env / .env.example).
+  // For Vercel + Neon/Supabase: change provider to "postgresql" and set a Postgres DATABASE_URL
+  // (and DIRECT_URL if you add directUrl). Steps are in docs/FreePremium-Production-Deploy-Guide.pdf
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int             @id @default(autoincrement())
+  name        String
+  slug        String          @unique
+  icon        String          @default("🎬")
+  imageUrl    String          @default("")
+  order       Int             @default(0)
+  enabled     Boolean         @default(true)
+  description String          @default("")
+  videos      Video[]
+  videoLinks  VideoCategory[]
+}
+
+model Video {
+  id             Int              @id @default(autoincrement())
+  title          String
+  slug           String           @unique
+  embedUrl       String
+  thumbnail      String
+  description    String           @default("")
+  tags           String           @default("")
+  seoTitle       String           @default("")
+  seoDescription String           @default("")
+  featured       Boolean          @default(false)
+  trending       Boolean          @default(false)
+  published      Boolean          @default(true)
+  exclusive      Boolean          @default(false)
+  duration       Int              @default(0)
+  quality        String           @default("720p")
+  views          Int              @default(0)
+  dmcaClaimed    Boolean          @default(false)
+  deletedAt      DateTime?
+  scheduledAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  /** Primary category (first selected) — for cards/breadcrumbs. */
+  categoryId     Int?
+  category       Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  reports        Report[]
+  performers     VideoPerformer[]
+  videoCategories VideoCategory[]
+
+  @@index([published, createdAt])
+  @@index([categoryId])
+  @@index([deletedAt])
+  @@index([views])
+}
+
+model VideoCategory {
+  videoId    Int
+  categoryId Int
+  video      Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, categoryId])
+  @@index([categoryId])
+}
+
+model Performer {
+  id          Int              @id @default(autoincrement())
+  name        String
+  slug        String           @unique
+  imageUrl    String           @default("")
+  description String           @default("")
+  enabled     Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  videos      VideoPerformer[]
+
+  @@index([enabled])
+}
+
+model VideoPerformer {
+  videoId     Int
+  performerId Int
+  video       Video     @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  performer   Performer @relation(fields: [performerId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, performerId])
+  @@index([performerId])
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  videoId   Int
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  reason    String
+  details   String   @default("")
+  email     String   @default("")
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([videoId])
+}
+
+model DmcaRequest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  url       String
+  company   String   @default("")
+  details   String   @default("")
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
