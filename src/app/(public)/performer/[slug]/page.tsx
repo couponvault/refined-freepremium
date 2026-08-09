@@ -15,7 +15,7 @@ import { publicVideoWhere } from "@/lib/videos";
 import VideoCard from "@/components/public/VideoCard";
 import VideoGrid from "@/components/public/VideoGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const PAGE_SIZE = 24;
 

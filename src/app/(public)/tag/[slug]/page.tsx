@@ -63,7 +63,7 @@ export default async function TagPage({ params, searchParams }: Props) {
     }),
     include: { category: true },
     orderBy: { createdAt: "desc" },
-    take: 400,
+    take: 100,
   });
 
   const matched = candidates.filter((v) =>

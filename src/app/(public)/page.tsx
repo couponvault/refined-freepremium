@@ -29,7 +29,7 @@ import { categoryCoverMap } from "@/lib/site";
 import { isAdsDemoMode, resolveAdHtml } from "@/lib/demo-ads";
 import { isSafeUrl } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 function isAdultSeoCopy(value?: string | null): boolean {
   if (!value?.trim()) return false;

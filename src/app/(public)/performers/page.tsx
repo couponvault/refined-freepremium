@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { buildMetadata } from "@/lib/seo";
 import { isSafeUrl } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Pornstars – Free HD Porn Videos by Star",

@@ -26,7 +26,7 @@ import VideoWatchClient from "@/components/public/VideoWatchClient";
 import ViewsNotice from "@/components/public/ViewsNotice";
 import { isAdsDemoMode, resolveAdHtml } from "@/lib/demo-ads";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -113,7 +113,7 @@ export default async function VideoPage({ params }: Props) {
     where: publicVideoWhere({ id: { not: video.id } }),
     include: { category: true },
     orderBy: { createdAt: "desc" },
-    take: 80,
+    take: 20,
   });
 
   const scored = candidates

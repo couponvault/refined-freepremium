@@ -91,7 +91,7 @@ export async function searchPublicVideos(opts: {
         where: { performer: { enabled: true } },
       },
     },
-    take: 2500,
+    take: 500,
   });
 
   const scored = candidates
@@ -131,7 +131,7 @@ export async function suggestPublic(q: string) {
           tags: true,
           description: true,
         },
-        take: 800,
+        take: 300,
         orderBy: { views: "desc" },
       }),
       db.category.findMany({
@@ -141,12 +141,12 @@ export async function suggestPublic(q: string) {
       db.performer.findMany({
         where: { enabled: true },
         select: { name: true, slug: true, imageUrl: true },
-        take: 600,
+        take: 300,
       }),
       db.video.findMany({
         where: buildVideoWhere(),
         select: { tags: true },
-        take: 500,
+        take: 200,
         orderBy: { views: "desc" },
       }),
     ]);

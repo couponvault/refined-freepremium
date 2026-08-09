@@ -1,4 +1,4 @@
-import { connection } from "next/server";
+
 import { db } from "@/lib/db";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
@@ -10,14 +10,14 @@ import SeoExtras from "@/components/public/SeoExtras";
 import CookieNotice from "@/components/public/CookieNotice";
 import { isAdsDemoMode, resolveAdHtml } from "@/lib/demo-ads";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await connection();
+
   const [categories, adSettings] = await Promise.all([
     db.category.findMany({
       where: { enabled: true },
