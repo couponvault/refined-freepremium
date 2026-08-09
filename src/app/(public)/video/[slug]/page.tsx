@@ -32,14 +32,7 @@ export const revalidate = 60;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  try {
-    const videos = await db.video.findMany({ select: { slug: true } });
-    return videos.map((v) => ({ slug: v.slug }));
-  } catch (err) {
-    // Fallback to on-demand ISR if DB is unreachable during Vercel build
-    console.error("Skipping SSG pre-render due to DB error:", err);
-    return [];
-  }
+  return []; // Fall back to on-demand ISR (Edge caching) due to DB connection limits
 }
 
 const getVideo = cache(async (slug: string) => {
