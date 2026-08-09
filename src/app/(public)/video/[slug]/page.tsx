@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -30,9 +31,8 @@ export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const video = await db.video.findFirst({
+const getVideo = cache(async (slug: string) => {
+  return await db.video.findFirst({
     where: publicVideoWhere({ slug }),
     include: {
       category: true,
@@ -46,6 +46,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
   });
+});
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const video = await getVideo(slug);
   if (!video) return {};
   const cats = (() => {
     const fromLinks = video.videoCategories
@@ -81,21 +86,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function VideoPage({ params }: Props) {
   const { slug } = await params;
-  const video = await db.video.findFirst({
-    where: publicVideoWhere({ slug }),
-    include: {
-      category: true,
-      videoCategories: {
-        include: { category: true },
-        where: { category: { enabled: true } },
-      },
-      performers: {
-        include: { performer: true },
-        where: { performer: { enabled: true } },
-      },
-    },
-  });
+  const video = await getVideo(slug);
   if (!video) notFound();
+  
   const videoPerformers = video.performers.map((vp) => vp.performer);
   const videoCats = (() => {
     const fromLinks = video.videoCategories
@@ -109,12 +102,19 @@ export default async function VideoPage({ params }: Props) {
   const tags = parseTags(video.tags);
   const tagSet = new Set(tags.map((t) => tagSlug(t)));
 
-  const candidates = await db.video.findMany({
-    where: publicVideoWhere({ id: { not: video.id } }),
-    include: { category: true },
-    orderBy: { createdAt: "desc" },
-    take: 20,
-  });
+  const [candidates, settings] = await Promise.all([
+    db.video.findMany({
+      where: publicVideoWhere({ id: { not: video.id } }),
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    db.setting.findMany({
+      where: {
+        key: { in: ["adsHeaderHtml", "adsSidebarHtml", "adsDemoMode"] },
+      },
+    })
+  ]);
 
   const scored = candidates
     .map((v) => {
@@ -138,11 +138,6 @@ export default async function VideoPage({ params }: Props) {
     }
   }
 
-  const settings = await db.setting.findMany({
-    where: {
-      key: { in: ["adsHeaderHtml", "adsSidebarHtml", "adsDemoMode"] },
-    },
-  });
   const settingsMap = Object.fromEntries(settings.map((s) => [s.key, s.value]));
   const demoMode = isAdsDemoMode(settingsMap.adsDemoMode);
   const headerAd = resolveAdHtml("header", settingsMap.adsHeaderHtml, demoMode);
