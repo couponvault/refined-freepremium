@@ -25,21 +25,39 @@ export async function categoryCoverMap(
   const map = new Map<number, string>();
   if (categoryIds.length === 0) return map;
   
-  for (const id of categoryIds) {
-    const v = await db.video.findFirst({
-      where: publicVideoWhere({
-        thumbnail: { not: "" },
-        OR: [
-          { categoryId: id },
-          { videoCategories: { some: { categoryId: id } } },
-        ],
-      }),
-      orderBy: [{ views: "desc" }, { createdAt: "desc" }],
-      select: { thumbnail: true },
-    });
-    if (v?.thumbnail) {
-      map.set(id, v.thumbnail);
+  // Fetch the top 2000 most viewed videos that have a thumbnail
+  // This is a single fast query that will cover almost all categories
+  const videos = await db.video.findMany({
+    where: {
+      thumbnail: { not: "" },
+      published: true,
+      deletedAt: null,
+      OR: [
+        { categoryId: { in: categoryIds } },
+        { videoCategories: { some: { categoryId: { in: categoryIds } } } },
+      ],
+    },
+    orderBy: [{ views: "desc" }, { createdAt: "desc" }],
+    take: 2000,
+    select: {
+      thumbnail: true,
+      categoryId: true,
+      videoCategories: { select: { categoryId: true } },
+    },
+  });
+
+  // Map the first matching video's thumbnail to each category
+  for (const v of videos) {
+    if (v.categoryId && categoryIds.includes(v.categoryId) && !map.has(v.categoryId)) {
+      map.set(v.categoryId, v.thumbnail);
     }
+    for (const vc of v.videoCategories) {
+      if (categoryIds.includes(vc.categoryId) && !map.has(vc.categoryId)) {
+        map.set(vc.categoryId, v.thumbnail);
+      }
+    }
+    if (map.size === categoryIds.length) break;
   }
+
   return map;
 }
