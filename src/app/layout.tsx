@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { DM_Sans, Syne } from "next/font/google";
 import { db } from "@/lib/db";
+import { unstable_cache } from "next/cache";
 import {
   ADULT_RATING_META,
   DEFAULT_ADULT_KEYWORDS,
@@ -29,10 +30,18 @@ const body = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
+const getGoogleSiteVerification = unstable_cache(
+  async () => {
+    return db.setting.findUnique({
+      where: { key: "googleSiteVerification" },
+    });
+  },
+  ["layout-google-site-verification"],
+  { tags: ["settings"] }
+);
+
 export async function generateMetadata(): Promise<Metadata> {
-  const row = await db.setting.findUnique({
-    where: { key: "googleSiteVerification" },
-  });
+  const row = await getGoogleSiteVerification();
   const google = row?.value?.trim();
   return {
     metadataBase: new URL(SITE_URL),
@@ -73,10 +82,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const getSiteThemeSettings = unstable_cache(
+  async () => {
+    return db.setting.findMany({
+      where: { key: { in: ["siteTheme", "siteThemeCustom"] } },
+    });
+  },
+  ["layout-site-theme-settings"],
+  { tags: ["settings"] }
+);
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const themeRows = await db.setting.findMany({
-    where: { key: { in: ["siteTheme", "siteThemeCustom"] } },
-  });
+  const themeRows = await getSiteThemeSettings();
   const map = Object.fromEntries(themeRows.map((r) => [r.key, r.value]));
   const skin = normalizeSiteTheme(map.siteTheme);
   const custom =
