@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import VideoCard, { type VideoCardData } from "./VideoCard";
 import VideoGrid from "./VideoGrid";
 import SkeletonCard from "./SkeletonCard";
@@ -32,7 +32,6 @@ export default function LoadMore({
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadNext = useCallback(async () => {
     setLoading(true);
@@ -63,20 +62,6 @@ export default function LoadMore({
     }
   }, [page, q, category, tag, sort, quality, exclusive, minDuration, maxDuration]);
 
-  useEffect(() => {
-    if (done) return;
-    const el = sentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading) void loadNext();
-      },
-      { rootMargin: "400px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [done, loading, loadNext]);
-
   return (
     <>
       {items.length > 0 && (
@@ -102,7 +87,15 @@ export default function LoadMore({
           You&apos;re all caught up
         </p>
       ) : (
-        <div ref={sentinelRef} className="h-1" />
+        <div className="mt-10 flex justify-center">
+          <button
+            onClick={() => void loadNext()}
+            disabled={loading}
+            className="rounded-full bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-transform hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          >
+            {loading ? "Loading..." : "See More Videos"}
+          </button>
+        </div>
       )}
     </>
   );
