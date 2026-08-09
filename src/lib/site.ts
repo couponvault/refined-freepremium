@@ -25,23 +25,21 @@ export async function categoryCoverMap(
   const map = new Map<number, string>();
   if (categoryIds.length === 0) return map;
   
-  await Promise.all(
-    categoryIds.map(async (id) => {
-      const v = await db.video.findFirst({
-        where: publicVideoWhere({
-          thumbnail: { not: "" },
-          OR: [
-            { categoryId: id },
-            { videoCategories: { some: { categoryId: id } } },
-          ],
-        }),
-        orderBy: [{ views: "desc" }, { createdAt: "desc" }],
-        select: { thumbnail: true },
-      });
-      if (v?.thumbnail) {
-        map.set(id, v.thumbnail);
-      }
-    })
-  );
+  for (const id of categoryIds) {
+    const v = await db.video.findFirst({
+      where: publicVideoWhere({
+        thumbnail: { not: "" },
+        OR: [
+          { categoryId: id },
+          { videoCategories: { some: { categoryId: id } } },
+        ],
+      }),
+      orderBy: [{ views: "desc" }, { createdAt: "desc" }],
+      select: { thumbnail: true },
+    });
+    if (v?.thumbnail) {
+      map.set(id, v.thumbnail);
+    }
+  }
   return map;
 }
