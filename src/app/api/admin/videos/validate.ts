@@ -29,11 +29,9 @@ export interface ValidatedVideo {
   categoryId: number | null;
 }
 
-/** Validates input and resolves a unique slug. `excludeId` skips self on updates. */
-export async function validateVideo(
-  body: VideoInput,
-  excludeId?: number
-): Promise<{ data: ValidatedVideo } | { error: string }> {
+export function validateVideoDataSync(
+  body: VideoInput
+): { data: Omit<ValidatedVideo, "slug"> } | { error: string } {
   const title = (body.title ?? "").trim();
   if (!title) return { error: "Title is required" };
   const embedUrl = toEmbedUrl((body.embedUrl ?? "").trim());
@@ -56,20 +54,6 @@ export async function validateVideo(
   if (seoDescription.length < 20)
     return { error: "SEO Description must be at least 20 characters" };
 
-  // Duplicate embed detection
-  const dup = await db.video.findFirst({
-    where: {
-      embedUrl,
-      deletedAt: null,
-      ...(excludeId ? { id: { not: excludeId } } : {}),
-    },
-    select: { id: true, title: true },
-  });
-  if (dup)
-    return {
-      error: `Duplicate embed URL — already used by "${dup.title}" (id ${dup.id})`,
-    };
-
   let categoryId: number | null = null;
   if (body.categoryId !== null && body.categoryId !== undefined) {
     categoryId = Number(body.categoryId);
@@ -90,21 +74,9 @@ export async function validateVideo(
     scheduledAt = d;
   }
 
-  const base = slugify((body.slug ?? "").trim() || title) || "video";
-  let slug = base;
-  for (let i = 2; ; i++) {
-    const existing = await db.video.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
-    if (!existing || existing.id === excludeId) break;
-    slug = `${base}-${i}`;
-  }
-
   return {
     data: {
       title,
-      slug,
       embedUrl,
       thumbnail,
       description: (body.description ?? "").trim(),
@@ -120,6 +92,49 @@ export async function validateVideo(
       views,
       scheduledAt,
       categoryId,
+    },
+  };
+}
+
+/** Validates input and resolves a unique slug. `excludeId` skips self on updates. */
+export async function validateVideo(
+  body: VideoInput,
+  excludeId?: number
+): Promise<{ data: ValidatedVideo } | { error: string }> {
+  const syncResult = validateVideoDataSync(body);
+  if ("error" in syncResult) return { error: syncResult.error };
+  const { data } = syncResult;
+  const { embedUrl, title } = data;
+
+  // Duplicate embed detection
+  const dup = await db.video.findFirst({
+    where: {
+      embedUrl,
+      deletedAt: null,
+      ...(excludeId ? { id: { not: excludeId } } : {}),
+    },
+    select: { id: true, title: true },
+  });
+  if (dup)
+    return {
+      error: `Duplicate embed URL — already used by "${dup.title}" (id ${dup.id})`,
+    };
+
+  const base = slugify((body.slug ?? "").trim() || title) || "video";
+  let slug = base;
+  for (let i = 2; ; i++) {
+    const existing = await db.video.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    if (!existing || existing.id === excludeId) break;
+    slug = `${base}-${i}`;
+  }
+
+  return {
+    data: {
+      ...data,
+      slug,
     },
   };
 }
