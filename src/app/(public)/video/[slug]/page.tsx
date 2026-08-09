@@ -31,6 +31,10 @@ export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
+export async function generateStaticParams() {
+  return []; // Generate on demand and cache them
+}
+
 const getVideo = cache(async (slug: string) => {
   return await db.video.findFirst({
     where: publicVideoWhere({ slug }),
