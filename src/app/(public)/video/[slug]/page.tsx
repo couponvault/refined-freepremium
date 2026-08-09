@@ -32,7 +32,8 @@ export const revalidate = 60;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return []; // Generate on demand and cache them
+  const videos = await db.video.findMany({ select: { slug: true } });
+  return videos.map((v) => ({ slug: v.slug }));
 }
 
 const getVideo = cache(async (slug: string) => {
