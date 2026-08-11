@@ -5,29 +5,91 @@
  */
 
 export const DEFAULT_SITE_TITLE =
-  "FreePremium – Free HD Porn Videos & XXX Sex Videos Online";
+  "FreePremium – Free HD Porn Videos & XXX Sex Videos Online | No Signup";
 
 export const DEFAULT_SITE_DESCRIPTION =
-  "Watch free HD porn videos and XXX sex videos online. Stream premium adult videos with top pornstars — fast, free, no sign-up required. Updated daily.";
+  "Watch free HD porn videos and XXX sex videos online. Stream premium MILF, amateur, teen (18+), lesbian, and anal adult videos with top pornstars — fast, free, no sign-up required. Updated daily.";
 
-/** Core sitewide keywords (meta + admin default). */
+/**
+ * Tier 1 + Tier 2 sitewide keywords — mega-volume global terms.
+ * mergeKeywords() slices to 40 per page, so priority order matters.
+ */
 export const DEFAULT_ADULT_KEYWORDS: string[] = [
+  // Tier 1 — mega volume
   "free porn",
   "porn videos",
-  "xxx videos",
   "free sex videos",
   "HD porn",
+  "xxx videos",
   "adult videos",
-  "pornstars",
-  "free xxx",
-  "sex videos",
-  "porn tube",
-  "premium porn free",
   "free HD porn",
+  "watch porn online free",
+  "free adult videos",
+  "sex videos online",
+  "free porn videos no signup",
+  "porn tube",
   "xxx tube",
   "adult tube",
-  "watch porn free",
+  "premium porn free",
+  // Tier 2 — top categories (global highest-volume)
+  "MILF porn",
+  "lesbian porn",
+  "amateur porn",
+  "teen porn",
+  "anal porn",
+  "step mom porn",
+  "big ass porn",
+  "big tits porn",
+  "blowjob videos",
+  "threesome videos",
+  "POV porn",
+  "creampie videos",
+  "interracial porn",
+  "ebony porn",
+  "latina porn",
+  "asian porn",
+  "japanese porn",
+  "hentai porn",
+  "mature porn",
+  "squirting porn",
+  "gangbang porn",
+  "massage porn",
+  "public sex videos",
+  "BBW porn",
+  // Tier 4 — long-tail / high-intent
+  "free porn site no signup",
+  "watch free HD porn without account",
+  "free premium porn leaked",
+  "free xxx streaming no registration",
+  "pornstars",
   "freepremium",
+];
+
+/**
+ * Tier 3 — Indian / Desi keywords (high volume, very low competition globally).
+ * Used on Desi-themed category, tag, and performer pages.
+ */
+export const DESI_KEYWORDS: string[] = [
+  "desi sex videos",
+  "Indian porn",
+  "Indian bhabhi sex",
+  "desi bhabhi porn",
+  "Indian aunty sex video",
+  "desi MMS videos",
+  "desi homemade sex",
+  "Indian teen sex",
+  "desi wife sex video",
+  "Indian college girl sex",
+  "Tamil sex videos",
+  "Telugu sex videos",
+  "Malayalam sex videos",
+  "Bengali sex video",
+  "Pakistani sex video",
+  "desi village sex",
+  "chudai video",
+  "Indian group sex",
+  "desi couple sex",
+  "Indian bhabhi devar",
 ];
 
 export function parseKeywordList(raw?: string | null): string[] {
@@ -56,13 +118,25 @@ export function mergeKeywords(...lists: (string[] | undefined)[]): string[] {
 
 export function categorySeo(name: string, description?: string | null) {
   const lower = name.toLowerCase();
+  // Detect desi/Indian category for extra keyword targeting
+  const isDesi = /\b(desi|indian|hindi|tamil|telugu|bengali|pakistan|bhabhi|aunty|chudai)\b/i.test(name);
   return {
-    title: `Free ${name} Porn Videos HD`,
+    title: `Free ${name} Porn Videos HD | No Signup – FreePremium`,
     description:
       description?.trim() ||
-      `Watch free ${lower} porn videos in HD. Stream ${lower} XXX sex videos online on FreePremium — no sign-up, updated daily.`,
+      `Watch free ${lower} porn videos in HD quality. Stream the best ${lower} XXX sex videos online on FreePremium — no sign-up, no ads, updated daily.`,
     keywords: mergeKeywords(
-      [`${lower} porn`, `free ${lower} porn`, `${lower} sex videos`, `${lower} xxx`],
+      [
+        `${lower} porn`,
+        `free ${lower} porn`,
+        `${lower} sex videos`,
+        `${lower} xxx`,
+        `free ${lower} HD`,
+        `${lower} videos online`,
+        `best ${lower} porn`,
+        `${lower} porn tube`,
+      ],
+      isDesi ? DESI_KEYWORDS : [],
       DEFAULT_ADULT_KEYWORDS
     ),
   };
@@ -70,17 +144,21 @@ export function categorySeo(name: string, description?: string | null) {
 
 export function performerSeo(name: string, description?: string | null) {
   return {
-    title: `${name} Porn Videos – Free HD`,
+    title: `${name} Porn Videos – Free HD XXX Scenes | FreePremium`,
     description:
       description?.trim() ||
-      `Watch free ${name} porn videos in HD. Stream ${name} XXX sex videos and scenes online on FreePremium — no sign-up required.`,
+      `Watch free ${name} porn videos and XXX scenes in HD. Stream every ${name} sex video online on FreePremium — no sign-up required. Updated daily.`,
     keywords: mergeKeywords(
       [
         `${name} porn`,
-        `${name} videos`,
-        `${name} sex`,
+        `${name} porn videos`,
         `${name} xxx`,
+        `${name} sex videos`,
+        `${name} free HD`,
+        `${name} scenes`,
+        `free ${name}`,
         "pornstars",
+        "free pornstar porn",
         "free porn",
       ],
       DEFAULT_ADULT_KEYWORDS
@@ -90,11 +168,20 @@ export function performerSeo(name: string, description?: string | null) {
 
 export function tagSeo(label: string) {
   const lower = label.toLowerCase();
+  const isDesi = /\b(desi|indian|hindi|tamil|telugu|bengali|pakistan|bhabhi|aunty|chudai)\b/i.test(label);
   return {
-    title: `Free ${label} Porn Videos`,
-    description: `Watch free ${lower} porn videos and XXX clips tagged ${lower}. Stream HD adult videos online on FreePremium.`,
+    title: `Free ${label} Porn Videos – HD XXX | FreePremium`,
+    description: `Watch free ${lower} porn videos and XXX clips online. Stream the best HD ${lower} sex videos on FreePremium — no signup, no ads.`,
     keywords: mergeKeywords(
-      [`${lower} porn`, `free ${lower}`, `${lower} sex videos`, `${lower} xxx`],
+      [
+        `${lower} porn`,
+        `free ${lower}`,
+        `${lower} sex videos`,
+        `${lower} xxx`,
+        `${lower} HD`,
+        `${lower} tube`,
+      ],
+      isDesi ? DESI_KEYWORDS : [],
       DEFAULT_ADULT_KEYWORDS
     ),
   };
@@ -146,15 +233,25 @@ export function videoKeywords(opts: {
 }) {
   const fromTags = (opts.tags ?? []).flatMap((t) => {
     const lower = t.toLowerCase();
-    return [lower, `${lower} porn`];
+    return [lower, `${lower} porn`, `free ${lower} video`];
   });
   const fromCats = (opts.categoryNames ?? []).flatMap((c) => {
     const lower = c.toLowerCase();
-    return [`${lower} porn`, `free ${lower}`];
+    return [`${lower} porn`, `free ${lower}`, `${lower} sex videos`, `${lower} HD`];
   });
   const fromStars = (opts.performerNames ?? []).flatMap((n) => [
     `${n} porn`,
     `${n} videos`,
+    `free ${n}`,
   ]);
-  return mergeKeywords(fromStars, fromCats, fromTags, DEFAULT_ADULT_KEYWORDS);
+  // Add Desi keywords if any tag/category hints Indian content
+  const allLabels = [...(opts.tags ?? []), ...(opts.categoryNames ?? [])].join(" ");
+  const isDesi = /\b(desi|indian|hindi|tamil|telugu|bengali|pakistan|bhabhi|aunty|chudai)\b/i.test(allLabels);
+  return mergeKeywords(
+    fromStars,
+    fromCats,
+    fromTags,
+    isDesi ? DESI_KEYWORDS : [],
+    DEFAULT_ADULT_KEYWORDS
+  );
 }
