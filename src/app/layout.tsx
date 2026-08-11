@@ -51,12 +51,18 @@ const getBingVerification = unstable_cache(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [googleRow, bingRow] = await Promise.all([
-    getGoogleSiteVerification(),
-    getBingVerification(),
-  ]);
-  const google = googleRow?.value?.trim();
-  const bing = bingRow?.value?.trim();
+  let google: string | undefined;
+  let bing: string | undefined;
+  try {
+    const [googleRow, bingRow] = await Promise.all([
+      getGoogleSiteVerification(),
+      getBingVerification(),
+    ]);
+    google = googleRow?.value?.trim();
+    bing = bingRow?.value?.trim();
+  } catch {
+    // fall back to no verification tags if DB unavailable during build
+  }
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -117,7 +123,14 @@ const getSiteThemeSettings = unstable_cache(
 );
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const themeRows = await getSiteThemeSettings();
+  // try/catch: prevents build crash if Neon connection pool is exhausted
+  // during concurrent static page generation. Falls back to default theme.
+  let themeRows: { key: string; value: string }[] = [];
+  try {
+    themeRows = await getSiteThemeSettings();
+  } catch {
+    // use default theme during build if DB is temporarily unavailable
+  }
   const map = Object.fromEntries(themeRows.map((r) => [r.key, r.value]));
   const skin = normalizeSiteTheme(map.siteTheme);
   const custom =

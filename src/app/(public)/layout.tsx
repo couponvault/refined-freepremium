@@ -43,10 +43,18 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
 
-  const [categories, adSettings] = await Promise.all([
-    getNavCategories(),
-    getLayoutAdSettings(),
-  ]);
+  // try/catch: if Neon pool is saturated during concurrent build, fall back
+  // to empty defaults so the build completes. At runtime the cache works fine.
+  let categories: { name: string; slug: string; icon: string }[] = [];
+  let adSettings: { key: string; value: string }[] = [];
+  try {
+    [categories, adSettings] = await Promise.all([
+      getNavCategories(),
+      getLayoutAdSettings(),
+    ]);
+  } catch {
+    // use empty defaults during build if DB is temporarily unavailable
+  }
   const ads = Object.fromEntries(adSettings.map((s) => [s.key, s.value]));
   const demoMode = isAdsDemoMode(ads.adsDemoMode);
   const footerHtml = resolveAdHtml("footer", ads.adsFooterHtml, demoMode);
