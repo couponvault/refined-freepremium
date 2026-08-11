@@ -1,4 +1,5 @@
 
+import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import Navbar from "@/components/public/Navbar";
 import Footer from "@/components/public/Footer";
@@ -12,6 +13,30 @@ import { isAdsDemoMode, resolveAdHtml } from "@/lib/demo-ads";
 
 export const revalidate = 60;
 
+// Cache these globally during build — shared across all 44 static pages
+// so Neon's 3-connection pool never gets overwhelmed.
+const getNavCategories = unstable_cache(
+  () =>
+    db.category.findMany({
+      where: { enabled: true },
+      orderBy: { name: "asc" },
+      select: { name: true, slug: true, icon: true },
+    }),
+  ["public-layout-nav-categories"],
+  { revalidate: 60, tags: ["categories"] }
+);
+
+const getLayoutAdSettings = unstable_cache(
+  () =>
+    db.setting.findMany({
+      where: {
+        key: { in: ["adsFooterHtml", "adsPopunderHtml", "adsNativeHtml", "adsDemoMode"] },
+      },
+    }),
+  ["public-layout-ad-settings"],
+  { revalidate: 60, tags: ["settings"] }
+);
+
 export default async function PublicLayout({
   children,
 }: {
@@ -19,23 +44,8 @@ export default async function PublicLayout({
 }) {
 
   const [categories, adSettings] = await Promise.all([
-    db.category.findMany({
-      where: { enabled: true },
-      orderBy: { name: "asc" },
-      select: { name: true, slug: true, icon: true },
-    }),
-    db.setting.findMany({
-      where: {
-        key: {
-          in: [
-            "adsFooterHtml",
-            "adsPopunderHtml",
-            "adsNativeHtml",
-            "adsDemoMode",
-          ],
-        },
-      },
-    }),
+    getNavCategories(),
+    getLayoutAdSettings(),
   ]);
   const ads = Object.fromEntries(adSettings.map((s) => [s.key, s.value]));
   const demoMode = isAdsDemoMode(ads.adsDemoMode);
