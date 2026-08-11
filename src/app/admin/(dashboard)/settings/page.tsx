@@ -28,6 +28,7 @@ export default function SettingsPage() {
   const [seoDescription, setSeoDescription] = useState("");
   const [seoKeywords, setSeoKeywords] = useState("");
   const [googleSiteVerification, setGoogleSiteVerification] = useState("");
+  const [bingVerification, setBingVerification] = useState("");
   const [siteTheme, setSiteTheme] = useState<SiteThemeId>("neon-rose");
   const [customColors, setCustomColors] =
     useState<CustomThemeColors>(DEFAULT_CUSTOM_THEME);
@@ -52,6 +53,7 @@ export default function SettingsPage() {
         setSeoDescription(d.seoDescription ?? "");
         setSeoKeywords(d.seoKeywords ?? "");
         setGoogleSiteVerification(d.googleSiteVerification ?? "");
+        setBingVerification(d.bingVerification ?? "");
         setSiteTheme(normalizeSiteTheme(d.siteTheme));
         setCustomColors(parseCustomTheme(d.siteThemeCustom));
         setUnlockCode(d.unlockCode ?? "");
@@ -96,6 +98,7 @@ export default function SettingsPage() {
         seoDescription,
         seoKeywords,
         googleSiteVerification,
+        bingVerification,
         siteTheme,
         siteThemeCustom: serializeCustomTheme(customColors),
         unlockCode,
@@ -340,6 +343,32 @@ export default function SettingsPage() {
                 Admin → Sitemap
               </Link>
               .
+            </p>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide text-muted uppercase">
+              Bing / Microsoft Webmaster Tools verification
+            </label>
+            <input
+              value={bingVerification}
+              onChange={(e) => setBingVerification(e.target.value)}
+              className={inputCls}
+              placeholder="Content value from msvalidate.01 meta tag"
+            />
+            <p className="mt-1 text-[11px] text-muted">
+              Go to{" "}
+              <a
+                href="https://www.bing.com/webmasters"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:underline"
+              >
+                bing.com/webmasters
+              </a>
+              , add your site, choose &quot;Meta Tag&quot; verification, and paste
+              only the{" "}
+              <code className="text-foreground">content</code> value here.
+              Covers Bing, Yahoo &amp; DuckDuckGo.
             </p>
           </div>
           <div>

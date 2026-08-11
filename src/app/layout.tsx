@@ -40,9 +40,23 @@ const getGoogleSiteVerification = unstable_cache(
   { tags: ["settings"] }
 );
 
+const getBingVerification = unstable_cache(
+  async () => {
+    return db.setting.findUnique({
+      where: { key: "bingVerification" },
+    });
+  },
+  ["layout-bing-verification"],
+  { tags: ["settings"] }
+);
+
 export async function generateMetadata(): Promise<Metadata> {
-  const row = await getGoogleSiteVerification();
-  const google = row?.value?.trim();
+  const [googleRow, bingRow] = await Promise.all([
+    getGoogleSiteVerification(),
+    getBingVerification(),
+  ]);
+  const google = googleRow?.value?.trim();
+  const bing = bingRow?.value?.trim();
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -77,8 +91,18 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary",
       images: ["/logo.png"],
     },
-    other: { ...ADULT_RATING_META },
-    ...(google ? { verification: { google } } : {}),
+    other: {
+      ...ADULT_RATING_META,
+      ...(bing ? { "msvalidate.01": bing } : {}),
+    },
+    ...(google || bing
+      ? {
+          verification: {
+            ...(google ? { google } : {}),
+            ...(bing ? { other: { "msvalidate.01": bing } } : {}),
+          },
+        }
+      : {}),
   };
 }
 

@@ -12,6 +12,7 @@ const KEYS = [
   "seoDescription",
   "seoKeywords",
   "googleSiteVerification",
+  "bingVerification",
   "siteTheme",
   "siteThemeCustom",
   "unlockCode",
