@@ -37,10 +37,15 @@ function isAdultSeoCopy(value?: string | null): boolean {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await db.setting.findMany({
-    where: { key: { in: ["seoTitle", "seoDescription", "seoKeywords"] } },
-  });
-  const map = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+  let map: Record<string, string> = {};
+  try {
+    const settings = await db.setting.findMany({
+      where: { key: { in: ["seoTitle", "seoDescription", "seoKeywords"] } },
+    });
+    map = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+  } catch {
+    // fall back to default adult SEO metadata if DB is unavailable during build
+  }
   return buildMetadata({
     title: isAdultSeoCopy(map.seoTitle) ? map.seoTitle : DEFAULT_SITE_TITLE,
     description: isAdultSeoCopy(map.seoDescription)
@@ -87,48 +92,59 @@ export default async function HomePage({
       minDuration != null && !Number.isNaN(minDuration) ? minDuration : undefined,
   });
 
-  const [featured, trending, latest, filtered, categories, adSettings] =
-    await Promise.all([
-    filtering
-      ? Promise.resolve([])
-      : db.video.findMany({
-          where: publicVideoWhere({ featured: true }),
-          include: { category: true },
-          orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-          take: 6,
+  let featured: any[] = [];
+  let trending: any[] = [];
+  let latest: any[] = [];
+  let filtered: any[] = [];
+  let categories: any[] = [];
+  let adSettings: any[] = [];
+
+  try {
+    [featured, trending, latest, filtered, categories, adSettings] =
+      await Promise.all([
+        filtering
+          ? Promise.resolve([])
+          : db.video.findMany({
+              where: publicVideoWhere({ featured: true }),
+              include: { category: true },
+              orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+              take: 6,
+            }),
+        filtering
+          ? Promise.resolve([])
+          : db.video.findMany({
+              where: publicVideoWhere({ trending: true }),
+              include: { category: true },
+              orderBy: { createdAt: "desc" },
+              take: 8,
+            }),
+        filtering
+          ? Promise.resolve([])
+          : db.video.findMany({
+              where: publicVideoWhere(),
+              include: { category: true },
+              orderBy: { createdAt: "desc" },
+              take: 18,
+            }),
+        filtering
+          ? db.video.findMany({
+              where: filterWhere,
+              include: { category: true },
+              orderBy: buildVideoOrderBy(sort),
+              take: 12,
+            })
+          : Promise.resolve([]),
+        db.category.findMany({
+          where: { enabled: true },
+          orderBy: { name: "asc" },
         }),
-    filtering
-      ? Promise.resolve([])
-      : db.video.findMany({
-          where: publicVideoWhere({ trending: true }),
-          include: { category: true },
-          orderBy: { createdAt: "desc" },
-          take: 8,
+        db.setting.findMany({
+          where: { key: { in: ["adsHomeHtml", "adsGridHtml", "adsDemoMode"] } },
         }),
-    filtering
-      ? Promise.resolve([])
-      : db.video.findMany({
-          where: publicVideoWhere(),
-          include: { category: true },
-          orderBy: { createdAt: "desc" },
-          take: 18,
-        }),
-    filtering
-      ? db.video.findMany({
-          where: filterWhere,
-          include: { category: true },
-          orderBy: buildVideoOrderBy(sort),
-          take: 12,
-        })
-      : Promise.resolve([]),
-    db.category.findMany({
-      where: { enabled: true },
-      orderBy: { name: "asc" },
-    }),
-    db.setting.findMany({
-      where: { key: { in: ["adsHomeHtml", "adsGridHtml", "adsDemoMode"] } },
-    }),
-  ]);
+      ]);
+  } catch {
+    // fall back to empty arrays during build if DB connection is unavailable
+  }
 
   const adsMap = Object.fromEntries(adSettings.map((s) => [s.key, s.value]));
   const demoMode = isAdsDemoMode(adsMap.adsDemoMode);

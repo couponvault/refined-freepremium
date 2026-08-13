@@ -18,7 +18,7 @@ export default function AdSlot({
   demoMode = false,
 }: {
   slot: Exclude<AdSlotId, "native">;
-  html?: string;
+  html?: string | null;
   demoMode?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);

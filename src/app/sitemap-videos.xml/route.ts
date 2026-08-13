@@ -20,24 +20,29 @@ function esc(s: string): string {
  * @see https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps
  */
 export async function GET() {
-  const videos = await db.video.findMany({
-    where: publicVideoWhere(),
-    select: {
-      slug: true,
-      title: true,
-      seoTitle: true,
-      seoDescription: true,
-      description: true,
-      thumbnail: true,
-      embedUrl: true,
-      duration: true,
-      createdAt: true,
-      updatedAt: true,
-      views: true,
-      exclusive: true,
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+  let videos: any[] = [];
+  try {
+    videos = await db.video.findMany({
+      where: publicVideoWhere(),
+      select: {
+        slug: true,
+        title: true,
+        seoTitle: true,
+        seoDescription: true,
+        description: true,
+        thumbnail: true,
+        embedUrl: true,
+        duration: true,
+        createdAt: true,
+        updatedAt: true,
+        views: true,
+        exclusive: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch {
+    // fall back to empty list if DB is unavailable
+  }
 
   const urls = videos
     .map((v) => {

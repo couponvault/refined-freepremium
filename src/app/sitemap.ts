@@ -6,27 +6,42 @@ import { publicVideoWhere } from "@/lib/videos";
 
 /** Full URL sitemap for Google Search Console — every public page + video + tag. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, performers, videos] = await Promise.all([
-    db.category.findMany({
-      where: { enabled: true },
-      select: { slug: true },
-    }),
-    db.performer.findMany({
-      where: { enabled: true },
-      select: { slug: true },
-    }),
-    db.video.findMany({
-      where: publicVideoWhere(),
-      select: {
-        slug: true,
-        updatedAt: true,
-        createdAt: true,
-        featured: true,
-        trending: true,
-        tags: true,
-      },
-    }),
-  ]);
+  let categories: { slug: string }[] = [];
+  let performers: { slug: string }[] = [];
+  let videos: {
+    slug: string;
+    updatedAt: Date;
+    createdAt: Date;
+    featured: boolean;
+    trending: boolean;
+    tags: string | null;
+  }[] = [];
+
+  try {
+    [categories, performers, videos] = await Promise.all([
+      db.category.findMany({
+        where: { enabled: true },
+        select: { slug: true },
+      }),
+      db.performer.findMany({
+        where: { enabled: true },
+        select: { slug: true },
+      }),
+      db.video.findMany({
+        where: publicVideoWhere(),
+        select: {
+          slug: true,
+          updatedAt: true,
+          createdAt: true,
+          featured: true,
+          trending: true,
+          tags: true,
+        },
+      }),
+    ]);
+  } catch {
+    // fall back to static pages during build if DB is unavailable
+  }
 
   const tagMap = new Map<string, Date>();
   for (const v of videos) {
