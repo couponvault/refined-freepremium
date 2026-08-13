@@ -23,11 +23,17 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function CategoriesPage() {
-  const categories = await db.category.findMany({
-    where: { enabled: true },
-    orderBy: { name: "asc" },
-  });
-  const covers = await categoryCoverMap(categories.map((c) => c.id));
+  let categories: any[] = [];
+  let covers = new Map();
+  try {
+    categories = await db.category.findMany({
+      where: { enabled: true },
+      orderBy: { name: "asc" },
+    });
+    covers = await categoryCoverMap(categories.map((c) => c.id));
+  } catch {
+    // fall back to empty array if DB is unavailable during build
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

@@ -89,7 +89,8 @@ export function toEmbedUrl(url: string): string {
   return extracted.trim();
 }
 
-export function parseTags(tags: string): string[] {
+export function parseTags(tags?: string | null): string[] {
+  if (!tags?.trim()) return [];
   return tags
     .split(",")
     .map((t) => t.trim())

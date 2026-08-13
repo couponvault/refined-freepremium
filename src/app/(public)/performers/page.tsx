@@ -22,13 +22,18 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function PerformersIndexPage() {
-  const performers = await db.performer.findMany({
-    where: { enabled: true },
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { videos: true } },
-    },
-  });
+  let performers: any[] = [];
+  try {
+    performers = await db.performer.findMany({
+      where: { enabled: true },
+      orderBy: { name: "asc" },
+      include: {
+        _count: { select: { videos: true } },
+      },
+    });
+  } catch {
+    // fall back to empty array if DB is unavailable during build
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 animate-rise">
