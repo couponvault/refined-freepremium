@@ -24,6 +24,8 @@ const KEYS = [
   "adsGridHtml",
   "adsPopunderHtml",
   "adsNativeHtml",
+  "adsInterstitialEnabled",
+  "adsInterstitialSeconds",
 ] as const;
 
 export async function GET() {

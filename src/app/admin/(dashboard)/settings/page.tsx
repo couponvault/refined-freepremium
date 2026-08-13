@@ -41,6 +41,8 @@ export default function SettingsPage() {
   const [adsGridHtml, setAdsGridHtml] = useState("");
   const [adsPopunderHtml, setAdsPopunderHtml] = useState("");
   const [adsNativeHtml, setAdsNativeHtml] = useState("");
+  const [adsInterstitialEnabled, setAdsInterstitialEnabled] = useState(true);
+  const [adsInterstitialSeconds, setAdsInterstitialSeconds] = useState("5");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -65,6 +67,8 @@ export default function SettingsPage() {
         setAdsGridHtml(d.adsGridHtml ?? "");
         setAdsPopunderHtml(d.adsPopunderHtml ?? "");
         setAdsNativeHtml(d.adsNativeHtml ?? "");
+        setAdsInterstitialEnabled(d.adsInterstitialEnabled !== "0");
+        setAdsInterstitialSeconds(d.adsInterstitialSeconds ?? "5");
         setLoading(false);
       });
   }, []);
@@ -110,6 +114,8 @@ export default function SettingsPage() {
         adsGridHtml,
         adsPopunderHtml,
         adsNativeHtml,
+        adsInterstitialEnabled: adsInterstitialEnabled ? "1" : "0",
+        adsInterstitialSeconds,
         ...overrides,
       }),
     });
@@ -475,6 +481,37 @@ export default function SettingsPage() {
                   Use adult-network popunder codes carefully; may be blocked by
                   browsers.
                 </p>
+              </div>
+
+              <div className="rounded-xl border border-border/80 bg-surface/50 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                      5-Second Video Loading Ad Page (Interstitial)
+                    </span>
+                    <p className="text-[11px] text-muted">
+                      Shows a 5-second countdown timer page with top &amp; bottom ads when a user clicks a video, before revealing the stream.
+                    </p>
+                  </div>
+                  <Toggle
+                    checked={adsInterstitialEnabled}
+                    onChange={(checked) => setAdsInterstitialEnabled(checked)}
+                  />
+                </div>
+                {adsInterstitialEnabled && (
+                  <div className="mt-3 flex items-center gap-3">
+                    <label className="text-xs text-muted">Countdown Seconds:</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={30}
+                      value={adsInterstitialSeconds}
+                      onChange={(e) => setAdsInterstitialSeconds(e.target.value)}
+                      className={`${inputCls} w-24 text-center font-bold`}
+                    />
+                    <span className="text-xs text-muted">seconds (default: 5)</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

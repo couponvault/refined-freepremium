@@ -24,6 +24,7 @@ import UpNext from "@/components/public/UpNext";
 import AdSlot from "@/components/public/AdSlot";
 import RelatedVideos from "@/components/public/RelatedVideos";
 import VideoWatchClient from "@/components/public/VideoWatchClient";
+import VideoInterstitialOverlay from "@/components/public/VideoInterstitialOverlay";
 import ViewsNotice from "@/components/public/ViewsNotice";
 import { isAdsDemoMode, resolveAdHtml } from "@/lib/demo-ads";
 
@@ -115,7 +116,15 @@ export default async function VideoPage({ params }: Props) {
     }),
     db.setting.findMany({
       where: {
-        key: { in: ["adsHeaderHtml", "adsSidebarHtml", "adsDemoMode"] },
+        key: {
+          in: [
+            "adsHeaderHtml",
+            "adsSidebarHtml",
+            "adsDemoMode",
+            "adsInterstitialEnabled",
+            "adsInterstitialSeconds",
+          ],
+        },
       },
     })
   ]);
@@ -149,6 +158,11 @@ export default async function VideoPage({ params }: Props) {
     "sidebar",
     settingsMap.adsSidebarHtml,
     demoMode
+  );
+  const interstitialEnabled = settingsMap.adsInterstitialEnabled !== "0";
+  const interstitialSeconds = Math.max(
+    1,
+    parseInt(settingsMap.adsInterstitialSeconds || "5", 10) || 5
   );
 
   const url = `${SITE_URL}/video/${video.slug}`;
@@ -216,23 +230,31 @@ export default async function VideoPage({ params }: Props) {
 
       <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-6">
         <div>
-          <VideoWatchClient
-            slug={video.slug}
-            title={video.title}
-            thumbnail={video.thumbnail}
-            embedUrl={video.embedUrl}
-            exclusive={video.exclusive}
-            durationSec={video.duration}
-            next={
-              related[0]
-                ? {
-                    slug: related[0].slug,
-                    title: related[0].title,
-                    thumbnail: related[0].thumbnail,
-                  }
-                : null
-            }
-          />
+          <VideoInterstitialOverlay
+            enabled={interstitialEnabled}
+            seconds={interstitialSeconds}
+            headerAd={headerAd}
+            sidebarAd={sidebarAd}
+            demoMode={demoMode}
+          >
+            <VideoWatchClient
+              slug={video.slug}
+              title={video.title}
+              thumbnail={video.thumbnail}
+              embedUrl={video.embedUrl}
+              exclusive={video.exclusive}
+              durationSec={video.duration}
+              next={
+                related[0]
+                  ? {
+                      slug: related[0].slug,
+                      title: related[0].title,
+                      thumbnail: related[0].thumbnail,
+                    }
+                  : null
+              }
+            />
+          </VideoInterstitialOverlay>
 
           <div className="lg:hidden">
             <UpNext
