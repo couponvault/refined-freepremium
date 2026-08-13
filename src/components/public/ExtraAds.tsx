@@ -19,16 +19,25 @@ export default function ExtraAds({
 }) {
   const nativeRef = useRef<HTMLDivElement>(null);
 
-  // Load Social Bar Script once sitewide
+  // Load Social Bar Script lazily during idle frames to prevent blocking main thread
   useEffect(() => {
     const SOCIAL_BAR_SRC =
       "https://pl30448437.effectivecpmnetwork.com/f9/6b/46/f96b46e79f041ce3076b315113015169.js";
     if (document.querySelector(`script[src="${SOCIAL_BAR_SRC}"]`)) return;
 
-    const s = document.createElement("script");
-    s.src = SOCIAL_BAR_SRC;
-    s.async = true;
-    document.body.appendChild(s);
+    const loadScript = () => {
+      const s = document.createElement("script");
+      s.src = SOCIAL_BAR_SRC;
+      s.async = true;
+      document.body.appendChild(s);
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).requestIdleCallback(loadScript, { timeout: 1500 });
+    } else {
+      setTimeout(loadScript, 800);
+    }
   }, []);
 
   // Execute Native Ad scripts dynamically

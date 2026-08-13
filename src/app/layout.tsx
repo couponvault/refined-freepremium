@@ -146,6 +146,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       }
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://www.highperformanceformat.com" />
+        <link rel="dns-prefetch" href="https://www.highperformanceformat.com" />
+        <link rel="preconnect" href="https://pl30448436.effectivecpmnetwork.com" />
+        <link rel="dns-prefetch" href="https://pl30448436.effectivecpmnetwork.com" />
+        <link rel="preconnect" href="https://pl30448437.effectivecpmnetwork.com" />
+        <link rel="dns-prefetch" href="https://pl30448437.effectivecpmnetwork.com" />
+      </head>
       <body className="min-h-full flex flex-col">
         <script
           dangerouslySetInnerHTML={{
