@@ -66,7 +66,16 @@ export const DEMO_AD_HTML: Record<AdSlotId, string> = {
   }),
 };
 
-/** Prefer real admin HTML; fall back to demo creative when preview mode is on. */
+export const DEFAULT_LIVE_ADS: Record<AdSlotId, string> = {
+  home: `<script>atOptions={'key':'ea7fc7a87012695922a4920ca9353921','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/ea7fc7a87012695922a4920ca9353921/invoke.js"></script>`,
+  header: `<script>atOptions={'key':'ea7fc7a87012695922a4920ca9353921','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/ea7fc7a87012695922a4920ca9353921/invoke.js"></script>`,
+  sidebar: `<script>atOptions={'key':'062a769776dccb3dfc5fc023c80325f9','format':'iframe','height':250,'width':300,'params':{}};</script><script src="https://www.highperformanceformat.com/062a769776dccb3dfc5fc023c80325f9/invoke.js"></script>`,
+  footer: `<script>atOptions={'key':'ea7fc7a87012695922a4920ca9353921','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/ea7fc7a87012695922a4920ca9353921/invoke.js"></script>`,
+  grid: `<script>atOptions={'key':'ea7fc7a87012695922a4920ca9353921','format':'iframe','height':90,'width':728,'params':{}};</script><script src="https://www.highperformanceformat.com/ea7fc7a87012695922a4920ca9353921/invoke.js"></script>`,
+  native: `<script async="async" data-cfasync="false" src="https://pl30448436.effectivecpmnetwork.com/856af2dadd676850d875e9bf3398a62f/invoke.js"></script><div id="container-856af2dadd676850d875e9bf3398a62f"></div>`,
+};
+
+/** Prefer real admin HTML; fall back to demo creative when preview mode is on, or live defaults. */
 export function resolveAdHtml(
   slot: AdSlotId,
   stored: string | undefined,
@@ -75,7 +84,7 @@ export function resolveAdHtml(
   const real = (stored ?? "").trim();
   if (real) return real;
   if (demoMode) return DEMO_AD_HTML[slot];
-  return "";
+  return DEFAULT_LIVE_ADS[slot] ?? "";
 }
 
 export function isAdsDemoMode(value: string | undefined): boolean {

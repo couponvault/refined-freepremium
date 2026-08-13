@@ -4,14 +4,12 @@ import { useEffect, useRef } from "react";
 import { AD_SLOT_LABELS } from "@/lib/demo-ads";
 
 /**
- * Loads popunder once per browser session on first click,
- * and injects native ad HTML into a reserved slot when provided.
+ * Loads social bar script sitewide and injects native ad HTML into reserved slot.
  */
 export default function ExtraAds({
   popunderHtml,
   nativeHtml,
   demoMode = false,
-  /** When true (and demoMode), show the fixed popunder location marker. */
   popunderPreview = false,
 }: {
   popunderHtml?: string;
@@ -19,40 +17,38 @@ export default function ExtraAds({
   demoMode?: boolean;
   popunderPreview?: boolean;
 }) {
-  const armed = useRef(false);
+  const nativeRef = useRef<HTMLDivElement>(null);
 
+  // Load Social Bar Script once sitewide
   useEffect(() => {
-    if (demoMode) return; // never fire real popunders in preview mode
-    if (!popunderHtml?.trim()) return;
-    if (sessionStorage.getItem("fp_popunder_done") === "1") return;
+    const SOCIAL_BAR_SRC =
+      "https://pl30448437.effectivecpmnetwork.com/f9/6b/46/f96b46e79f041ce3076b315113015169.js";
+    if (document.querySelector(`script[src="${SOCIAL_BAR_SRC}"]`)) return;
 
-    const onClick = () => {
-      if (armed.current) return;
-      armed.current = true;
-      try {
-        sessionStorage.setItem("fp_popunder_done", "1");
-        const trimmed = popunderHtml.trim();
-        if (/^https?:\/\//i.test(trimmed)) {
-          window.open(trimmed, "_blank", "noopener,noreferrer");
-        } else {
-          const w = window.open("about:blank", "_blank");
-          if (w) {
-            w.document.open();
-            w.document.write(trimmed);
-            w.document.close();
-          }
-        }
-      } catch {
-        /* blocked by popup blocker — ignore */
-      }
-      document.removeEventListener("click", onClick, true);
-    };
+    const s = document.createElement("script");
+    s.src = SOCIAL_BAR_SRC;
+    s.async = true;
+    document.body.appendChild(s);
+  }, []);
 
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
-  }, [popunderHtml, demoMode]);
-
+  // Execute Native Ad scripts dynamically
   const native = (nativeHtml ?? "").trim();
+  useEffect(() => {
+    if (!nativeRef.current || !native) return;
+
+    const container = nativeRef.current;
+    container.innerHTML = native;
+
+    const scripts = Array.from(container.querySelectorAll("script"));
+    scripts.forEach((oldScript) => {
+      const newScript = document.createElement("script");
+      Array.from(oldScript.attributes).forEach((attr) => {
+        newScript.setAttribute(attr.name, attr.value);
+      });
+      newScript.textContent = oldScript.textContent;
+      oldScript.parentNode?.replaceChild(newScript, oldScript);
+    });
+  }, [native]);
 
   return (
     <>
@@ -69,14 +65,14 @@ export default function ExtraAds({
         </div>
       )}
       {native ? (
-        <div data-ad="native" className="relative my-6 overflow-hidden rounded-xl">
+        <div data-ad="native" className="relative my-6 overflow-hidden rounded-xl flex justify-center items-center">
           {demoMode && (
             <div className="pointer-events-none absolute left-2 top-2 z-10 rounded-md bg-accent px-2 py-0.5 text-[10px] font-bold tracking-wide text-white shadow-lg">
               AD SLOT · {AD_SLOT_LABELS.native}
               {native.includes("DEMO AD") ? " · demo" : " · live HTML"}
             </div>
           )}
-          <div dangerouslySetInnerHTML={{ __html: native }} />
+          <div ref={nativeRef} className="w-full flex justify-center items-center overflow-x-auto min-h-[100px]" />
         </div>
       ) : null}
     </>
