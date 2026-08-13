@@ -67,7 +67,6 @@ export default async function PublicLayout({
       <ExtraAds
         popunderHtml={ads.adsPopunderHtml}
         demoMode={demoMode}
-        popunderPreview
       />
       <Navbar categories={categories} />
       <main className="flex-1 pb-20 md:pb-0">
