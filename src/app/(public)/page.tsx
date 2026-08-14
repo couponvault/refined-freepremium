@@ -124,7 +124,7 @@ export default async function HomePage({
               where: publicVideoWhere(),
               include: { category: true },
               orderBy: { createdAt: "desc" },
-              take: 18,
+              take: 12,
             }),
         filtering
           ? db.video.findMany({
@@ -207,6 +207,7 @@ export default async function HomePage({
               <LoadMore
                 key={`${sort}-${quality}-${exclusive}-${minDuration}`}
                 initialPage={1}
+                excludeSlugs={filtered.map((v) => v.slug)}
                 sort={sort}
                 quality={quality}
                 exclusive={exclusive || undefined}
@@ -271,7 +272,7 @@ export default async function HomePage({
                   </VideoGrid>
                 </div>
               )}
-              <LoadMore initialPage={1} />
+              <LoadMore initialPage={1} excludeSlugs={latest.map((v) => v.slug)} />
             </section>
           )}
         </>

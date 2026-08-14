@@ -148,6 +148,7 @@ export default async function SearchPage({ searchParams }: Props) {
           {total > PAGE_SIZE && (
             <LoadMore
               initialPage={1}
+              excludeSlugs={videos.map((v) => v.slug)}
               q={query}
               sort={sort}
               quality={quality}

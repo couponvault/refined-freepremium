@@ -15,6 +15,7 @@ export interface LoadMoreFilters {
   exclusive?: boolean;
   minDuration?: number;
   maxDuration?: number;
+  excludeSlugs?: string[];
 }
 
 export default function LoadMore({
@@ -27,6 +28,7 @@ export default function LoadMore({
   exclusive,
   minDuration,
   maxDuration,
+  excludeSlugs,
 }: LoadMoreFilters) {
   const [items, setItems] = useState<VideoCardData[]>([]);
   const [page, setPage] = useState(initialPage);
@@ -51,7 +53,14 @@ export default function LoadMore({
         page: number;
         totalPages: number;
       } = await res.json();
-      setItems((prev) => [...prev, ...data.items]);
+      setItems((prev) => {
+        const existing = new Set([
+          ...(excludeSlugs ?? []),
+          ...prev.map((x) => x.slug),
+        ]);
+        const fresh = data.items.filter((x) => !existing.has(x.slug));
+        return [...prev, ...fresh];
+      });
       setPage(data.page);
       if (data.page >= data.totalPages || data.items.length === 0)
         setDone(true);
@@ -60,7 +69,7 @@ export default function LoadMore({
     } finally {
       setLoading(false);
     }
-  }, [page, q, category, tag, sort, quality, exclusive, minDuration, maxDuration]);
+  }, [page, q, category, tag, sort, quality, exclusive, minDuration, maxDuration, excludeSlugs]);
 
   return (
     <>
