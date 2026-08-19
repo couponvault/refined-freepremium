@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High Intent Utility Vertical - Adsterra Monetization Ready Landing Page</title>
+  <meta name="description" content="High buyer-intent landing architecture for security fixes, VPN setup, antivirus alternatives, and performance optimization. Monetization-ready for Adsterra ad formats.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- ADSTERRA POPUNDER CODE -->
+  <script src="https://pl30856650.effectivecpmnetwork.com/aa/83/07/aa83079c59d3598376c7ffb7be20db41.js"></script>
+
+  <!-- ADSTERRA SOCIAL BAR CODE -->
+  <script src="https://pl30856652.effectivecpmnetwork.com/53/aa/8f/53aa8f2d49c5bd5c7e97de0b4856dbf5.js"></script>
+
+  <style>
+    /* RESET & BASE STYLES */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-main: #0b0e14;
+      --bg-card: #131722;
+      --bg-card-hover: #181d2b;
+      --bg-slot: #151a28;
+      --border-card: #22293a;
+      --border-dashed: #3b82f6;
+      --border-dashed-muted: #2d374e;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #3b82f6;
+      --accent-blue-hover: #2563eb;
+      --accent-purple: #8b5cf6;
+      --code-bg: #1e2538;
+      --code-text: #a5b4fc;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-bottom: 100px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* CONTAINER & LAYOUT */
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4 {
+      color: var(--text-primary);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    code, .code-badge {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      border: 1px solid rgba(165, 180, 252, 0.15);
+      display: inline-block;
+    }
+
+    /* AD CONTAINER SLOTS - PERFECT FIT & NO OVERFLOW */
+    .ad-slot-box {
+      background-color: var(--bg-slot);
+      border: 1px dashed var(--border-dashed-muted);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 90px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* FORCE ADSTERRA IFRAMES TO STAY CLEAN & CENTERED */
+    .ad-slot-box iframe {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      display: block !important;
+      border: none !important;
+      border-radius: var(--radius-sm);
+    }
+
+    .ad-slot-box:hover {
+      border-color: var(--border-dashed);
+      background-color: rgba(59, 130, 246, 0.03);
+    }
+
+    .ad-slot-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 6px;
+    }
+
+    .ad-slot-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+    }
+
+    /* SECTION 1: TOP BANNER */
+    .top-banner-wrapper {
+      width: 100%;
+    }
+
+    .top-banner-wrapper .ad-slot-box {
+      min-height: 110px;
+    }
+
+    /* SECTION 2: HERO SECTION (2 COLUMNS) */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-card-left {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      width: fit-content;
+    }
+
+    .hero-card-left h1 {
+      font-size: 2.2rem;
+      line-height: 1.2;
+    }
+
+    .hero-card-left p {
+      font-size: 1rem;
+    }
+
+    .cta-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid var(--border-card);
+      padding-top: 20px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .feature-item span {
+      font-size: 1.1rem;
+    }
+
+    .hero-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-2x2-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .stat-card h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-card p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .hero-native-priority {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-native-priority .ad-slot-box {
+      height: 100%;
+      min-height: 180px;
+    }
+
+    /* SECTION CARD WRAPPER */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .section-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .section-header p {
+      max-width: 900px;
+    }
+
+    /* 3 COLUMN STRATEGY GRID */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 850px) {
+      .strategy-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .strategy-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .strategy-icon {
+      font-size: 1.4rem;
+      color: var(--accent-blue);
+    }
+
+    .strategy-card h4 {
+      font-size: 1rem;
+    }
+
+    .strategy-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ALL AD FORMATS GRID (2 EQUAL COLUMNS) */
+    .ad-formats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 8px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .ad-formats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .format-block {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .format-block-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* AD PLACEMENT BLUEPRINT SPLIT */
+    .blueprint-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .blueprint-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .blueprint-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .blueprint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .blueprint-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .blueprint-item strong {
+      color: var(--text-primary);
+    }
+
+    .sidebar-slot-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-slot-card .ad-slot-box {
+      flex: 1;
+      min-height: 280px;
+    }
+
+    /* CHECKLIST ITEMS */
+    .checklist-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .checklist-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .checklist-item strong {
+      color: var(--text-primary);
+    }
+
+    /* MASTER CONTROL SECTION */
+    .master-control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .master-control-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .master-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .master-card h4 {
+      font-size: 1rem;
+    }
+
+    .master-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* STICKY BOTTOM SOCIAL BAR */
+    .sticky-social-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 14, 20, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-card);
+      padding: 12px 16px;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .sticky-social-bar .ad-slot-box {
+      width: 100%;
+      max-width: 900px;
+      min-height: 50px;
+      padding: 8px;
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-container">
+
+    <!-- 1. TOP BANNER SLOT (Banner 728x90) -->
+    <div class="top-banner-wrapper">
+      <div class="ad-slot-box" id="ad-banner-728x90-top" style="min-height: 100px;">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '5fcf1be80f719f52fc5b75e4c227b5c8',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/5fcf1be80f719f52fc5b75e4c227b5c8/invoke.js"></script>
+      </div>
+    </div>
+
+    <!-- 2. HERO SECTION -->
+    <div class="hero-grid">
+      <!-- Left Hero Card -->
+      <div class="hero-card-left">
+        <div class="badge-pill">
+          <span>✓</span>
+          <span>2026 High Intent Utility Vertical</span>
+        </div>
+        
+        <h1>Secure Devices, Improve Speed, and Capture High-Value Utility Traffic</h1>
+        
+        <p>This landing architecture is built for high buyer-intent queries: security fixes, antivirus alternatives, VPN setup, privacy checks, and performance optimization. The flow is content-first, trust-rich, and monetization-ready without aggressive overlap.</p>
+        
+        <div class="cta-button-group">
+          <a href="https://www.effectivecpmnetwork.com/g3v1ap9x6?key=69087172e3636c6cf24b39afe780879d" target="_blank" rel="noopener noreferrer" class="btn btn-primary smartlink-link" id="offerBtn">
+            <span>⚡</span> Open Premium Offer
+          </a>
+          <a href="#formats-section" class="btn btn-secondary">
+            <span>▦</span> View All Formats
+          </a>
+          <a href="https://www.effectivecpmnetwork.com/g3v1ap9x6?key=69087172e3636c6cf24b39afe780879d" target="_blank" rel="noopener noreferrer" class="btn btn-secondary smartlink-link" id="smartlinkPrimary">
+            <span>🔗</span> Smartlink CTA
+          </a>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span>⚡</span> Fast-loading static architecture with minimal layout shift risk.
+          </div>
+          <div class="feature-item">
+            <span>📱</span> Responsive by default: phone, tablet, laptop, and wide-screen safe.
+          </div>
+          <div class="feature-item">
+            <span>📈</span> Designed for premium ad formats while preserving clean reading flow.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Hero Column -->
+      <div class="hero-right-col">
+        <!-- 4 Stats Cards Grid -->
+        <div class="stats-2x2-grid">
+          <div class="stat-card">
+            <h4>10/10</h4>
+            <p>All requested ad formats mapped</p>
+          </div>
+          <div class="stat-card">
+            <h4>Mobile-First</h4>
+            <p>No overlap structure on common widths</p>
+          </div>
+          <div class="stat-card">
+            <h4>Premium Copy</h4>
+            <p>Utility + security + performance intent</p>
+          </div>
+          <div class="stat-card">
+            <h4>Easy Replace</h4>
+            <p>Each slot has dedicated unique id</p>
+          </div>
+        </div>
+
+        <!-- Native Banner Priority Slot -->
+        <div class="hero-native-priority">
+          <div class="ad-slot-box" id="ad-native-banner-hero" style="min-height: 200px;">
+            <script async="async" data-cfasync="false" src="https://pl30856651.effectivecpmnetwork.com/910bea517aa5cf57b6ebcc7b6355c281/invoke.js"></script>
+            <div id="container-910bea517aa5cf57b6ebcc7b6355c281"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. CONTENT STRATEGY SECTION -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Professional Content Strategy for Better Payout</h2>
+        <p>Highest yield usually comes from intent-rich language and trust-led layout: clear pain points, practical solutions, authority signals, and focused CTA design. For global traffic, English-first copy performs strongly in premium geos and can be localized later.</p>
+      </div>
+
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="strategy-icon">🔍</div>
+          <h4>High-CPC Query Language</h4>
+          <p>Use action terms: fix, secure, optimize, clean, protect, boost, detect. These match urgent problem-solving intent.</p>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-icon">📋</div>
+          <h4>Conversion-Grade Structure</h4>
+          <p>Sequence: pain point, quick diagnosis, simple solution path, proof cue, then monetization CTA.</p>
+        </div>
+
+        <div class="strategy-card">
+          <div class="strategy-icon">📈</div>
+          <h4>Revenue-Safe UX</h4>
+          <p>Separate content and ads cleanly; avoid intrusive stacking to protect retention and session depth.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ALL AD FORMATS (REPLACE-READY) SECTION -->
+    <div class="section-card" id="formats-section">
+      <div class="section-header">
+        <h2>All Ad Formats (Replace-Ready)</h2>
+        <p>Each block below matches your provided list. Replace placeholder with your code. For Smartlink, replace only URL. For Popunder, use a user-click event.</p>
+      </div>
+
+      <div class="ad-formats-grid">
+        <!-- 1. Popunder -->
+        <div class="format-block">
+          <div class="format-block-header">Popunder</div>
+          <div class="ad-slot-box" id="ad-popunder" style="min-height: 120px;">
+            <div class="ad-slot-title">POPUNDER ACTIVE ON PAGE CLICK</div>
+            <a href="https://www.effectivecpmnetwork.com/g3v1ap9x6?key=69087172e3636c6cf24b39afe780879d" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="margin-top: 8px; font-size: 0.85rem; padding: 8px 16px;">
+              ⚡ Test Popunder Trigger
+            </a>
+          </div>
+        </div>
+
+        <!-- 2. Native Banner -->
+        <div class="format-block">
+          <div class="format-block-header">Native Banner</div>
+          <div class="ad-slot-box" id="ad-native-banner-formats" style="min-height: 120px;">
+            <div class="ad-slot-title">NATIVE BANNER ACTIVE</div>
+            <div class="ad-slot-desc">Native ad unit is rendering above-the-fold in Hero section.</div>
+          </div>
+        </div>
+
+        <!-- 3. Social Bar -->
+        <div class="format-block">
+          <div class="format-block-header">Social Bar</div>
+          <div class="ad-slot-box" id="ad-social-bar-inline" style="min-height: 120px;">
+            <div class="ad-slot-title">SOCIAL BAR ACTIVE</div>
+            <div class="ad-slot-desc">Social Bar notification script is active globally.</div>
+          </div>
+        </div>
+
+        <!-- 4. Smartlink -->
+        <div class="format-block">
+          <div class="format-block-header">Smartlink</div>
+          <div class="ad-slot-box" id="ad-smartlink" style="min-height: 120px;">
+            <div class="ad-slot-title">SMARTLINK TARGET</div>
+            <a href="https://www.effectivecpmnetwork.com/g3v1ap9x6?key=69087172e3636c6cf24b39afe780879d" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="margin-top: 8px; font-size: 0.85rem; padding: 8px 16px;">
+              🔗 Open High-CPC Smartlink
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. Banner 468x60 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 468×60</div>
+          <div class="ad-slot-box" id="ad-banner-468x60" style="min-height: 80px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : 'f5e744f58b6b60d7f6f714d9c3bb8b13',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/f5e744f58b6b60d7f6f714d9c3bb8b13/invoke.js"></script>
+          </div>
+        </div>
+
+        <!-- 6. Banner 300x250 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 300×250</div>
+          <div class="ad-slot-box" id="ad-banner-300x250" style="min-height: 270px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '959f6e3105d23507d881c657b14f93e0',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/959f6e3105d23507d881c657b14f93e0/invoke.js"></script>
+          </div>
+        </div>
+
+        <!-- 7. Banner 160x600 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 160×600</div>
+          <div class="ad-slot-box" id="ad-banner-160x600" style="min-height: 620px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '8a45e086e58cca1eaa7247a24de6b9a8',
+                'format' : 'iframe',
+                'height' : 600,
+                'width' : 160,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/8a45e086e58cca1eaa7247a24de6b9a8/invoke.js"></script>
+          </div>
+        </div>
+
+        <!-- 8. Banner 160x300 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 160×300</div>
+          <div class="ad-slot-box" id="ad-banner-160x300" style="min-height: 320px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '1740d149dc50030f9b6173a5f9003c3f',
+                'format' : 'iframe',
+                'height' : 300,
+                'width' : 160,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/1740d149dc50030f9b6173a5f9003c3f/invoke.js"></script>
+          </div>
+        </div>
+
+        <!-- 9. Banner 320x50 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 320×50</div>
+          <div class="ad-slot-box" id="ad-banner-320x50" style="min-height: 70px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '643fc8216c3ecc5ff65e4b5da9d30deb',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/643fc8216c3ecc5ff65e4b5da9d30deb/invoke.js"></script>
+          </div>
+        </div>
+
+        <!-- 10. Banner 728x90 -->
+        <div class="format-block">
+          <div class="format-block-header">Banner 728×90</div>
+          <div class="ad-slot-box" id="ad-banner-728x90" style="min-height: 100px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '5fcf1be80f719f52fc5b75e4c227b5c8',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/5fcf1be80f719f52fc5b75e4c227b5c8/invoke.js"></script>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. AD PLACEMENT BLUEPRINT SECTION -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Ad Placement Blueprint</h2>
+        <p>This map prioritizes visibility + reading quality + policy-safe structure. Keep scripts asynchronous and preserve spacing around content blocks.</p>
+      </div>
+
+      <div class="blueprint-grid">
+        <div class="blueprint-left">
+          <div class="ad-slot-box" id="ad-content-primary" style="min-height: 100px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : '5fcf1be80f719f52fc5b75e4c227b5c8',
+                'format' : 'iframe',
+                'height' : 90,
+                'width' : 728,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/5fcf1be80f719f52fc5b75e4c227b5c8/invoke.js"></script>
+          </div>
+
+          <div class="blueprint-list">
+            <div class="blueprint-item">
+              <strong>1. Top Intent Capture:</strong> Use <code>ad-banner-728x90-top</code> + <code>ad-native-banner-hero</code>.
+            </div>
+            <div class="blueprint-item">
+              <strong>2. Mid Scroll Monetization:</strong> Use <code>ad-content-primary</code> and <code>ad-banner-300x250</code>.
+            </div>
+            <div class="blueprint-item">
+              <strong>3. Desktop Depth:</strong> Keep <code>ad-sidebar-rectangle</code> sticky for long sessions.
+            </div>
+            <div class="blueprint-item">
+              <strong>4. Persistent Layer:</strong> Social bar in bottom fixed container for always-on visibility.
+            </div>
+            <div class="blueprint-item">
+              <strong>5. Action Trigger:</strong> Popunder call should run only on explicit user click.
+            </div>
+          </div>
+        </div>
+
+        <div class="blueprint-right">
+          <div class="sidebar-slot-card">
+            <div class="ad-slot-box" id="ad-sidebar-rectangle" style="min-height: 270px;">
+              <script type="text/javascript">
+                atOptions = {
+                  'key' : '959f6e3105d23507d881c657b14f93e0',
+                  'format' : 'iframe',
+                  'height' : 250,
+                  'width' : 300,
+                  'params' : {}
+                };
+              </script>
+              <script type="text/javascript" src="https://www.highperformanceformat.com/959f6e3105d23507d881c657b14f93e0/invoke.js"></script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. FAST DEPLOYMENT CHECKLIST SECTION -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Fast Deployment Checklist</h2>
+        <p>Replace placeholders in matching ids, verify on key breakpoints, then publish.</p>
+      </div>
+
+      <div class="checklist-grid">
+        <div class="checklist-item">
+          <strong>Code Replace:</strong> Paste scripts inside each target id container and remove demo notes.
+        </div>
+        <div class="checklist-item">
+          <strong>Smartlink:</strong> Replace URL in <code>#smartlinkPrimary</code>.
+        </div>
+        <div class="checklist-item">
+          <strong>Popunder:</strong> Add your script call in the click handler for <code>#offerBtn</code>.
+        </div>
+        <div class="checklist-item">
+          <strong>Responsive QA:</strong> Test 320, 375, 768, 1024, 1440 widths before live.
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. AD MASTER CONTROL (SINGLE LOCATION SETUP) SECTION -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Ad Master Control (Single Location Setup)</h2>
+        <p>Direct HTML integration active for all 10 Adsterra placements.</p>
+      </div>
+
+      <div class="master-control-grid">
+        <div class="master-card">
+          <h4>How It Works</h4>
+          <p>Adsterra codes are placed directly inside each target slot div. When served over Netlify HTTP/HTTPS, browser renders all 10 ad formats natively.</p>
+        </div>
+
+        <div class="master-card">
+          <h4>Smartlink + Popunder</h4>
+          <p>Popunder script is active globally in &lt;head&gt;. Smartlink is attached to all CTA buttons.</p>
+        </div>
+
+        <div class="master-card">
+          <h4>Duplicate Placement Auto Sync</h4>
+          <p>Hero native banner and format native banners load asynchronously without blocking page scroll.</p>
+        </div>
+
+        <div class="master-card">
+          <h4>Netlify / Domain Note</h4>
+          <p>Adsterra ad networks require an active HTTP/HTTPS domain origin (like Netlify) to deliver live ad creatives.</p>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- /page-container -->
+
+  <!-- 8. STICKY SOCIAL BAR CONTAINER -->
+  <div class="sticky-social-bar">
+    <div class="ad-slot-box" id="ad-social-bar-sticky">
+      <div class="ad-slot-title">STICKY SOCIAL BAR CONTAINER</div>
+      <div class="ad-slot-desc">Social Bar active floating layer.</div>
+    </div>
+  </div>
+
+</body>
+</html>

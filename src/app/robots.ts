@@ -21,6 +21,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api/", "/watch-later"],
       },
     ],
-    sitemap: [`${base}/sitemap.xml`, `${base}/sitemap-videos.xml`],
+    sitemap: [`${base}/sitemap.xml`, `${base}/sitemap-videos.xml`, `${base}/feed.xml`],
   };
 }
