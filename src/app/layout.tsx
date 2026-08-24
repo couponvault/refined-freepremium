@@ -51,7 +51,9 @@ const getBingVerification = unstable_cache(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let google: string | undefined = process.env.GOOGLE_SITE_VERIFICATION;
+  let google: string | undefined =
+    process.env.GOOGLE_SITE_VERIFICATION ||
+    "l8DZURa5OsQYiHlaBZkk9EY9zNWzkVFSENN5";
   let bing: string | undefined = process.env.BING_SITE_VERIFICATION;
   try {
     const [googleRow, bingRow] = await Promise.all([
