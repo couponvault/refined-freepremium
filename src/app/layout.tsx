@@ -51,17 +51,17 @@ const getBingVerification = unstable_cache(
 );
 
 export async function generateMetadata(): Promise<Metadata> {
-  let google: string | undefined;
-  let bing: string | undefined;
+  let google: string | undefined = process.env.GOOGLE_SITE_VERIFICATION;
+  let bing: string | undefined = process.env.BING_SITE_VERIFICATION;
   try {
     const [googleRow, bingRow] = await Promise.all([
       getGoogleSiteVerification(),
       getBingVerification(),
     ]);
-    google = googleRow?.value?.trim();
-    bing = bingRow?.value?.trim();
+    if (googleRow?.value?.trim()) google = googleRow.value.trim();
+    if (bingRow?.value?.trim()) bing = bingRow.value.trim();
   } catch {
-    // fall back to no verification tags if DB unavailable during build
+    // fall back to env variables if DB unavailable during build
   }
   return {
     metadataBase: new URL(SITE_URL),
@@ -99,6 +99,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     other: {
       ...ADULT_RATING_META,
+      ...(google ? { "google-site-verification": google } : {}),
       ...(bing ? { "msvalidate.01": bing } : {}),
     },
     ...(google || bing
